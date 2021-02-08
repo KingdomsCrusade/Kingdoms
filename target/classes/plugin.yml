@@ -1,6 +1,6 @@
 name: Kingdoms
 main: com.kingdomscrusade.Kingdoms.KingdomsMain
-version: 1.0
+version: v0.2-alpha
 author: "Little Hill MYR"
 api-version: 1.16
 depend:
