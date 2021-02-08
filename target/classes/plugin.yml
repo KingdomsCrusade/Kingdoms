@@ -1,0 +1,13 @@
+name: Kingdoms
+main: com.kingdomscrusade.Kingdoms.KingdomsMain
+version: 1.0
+author: "Little Hill MYR"
+api-version: 1.16
+depend:
+  - NickNamer
+softdepend:
+  - NickNamer
+commands:
+  kingdoms:
+    description: Give a list of active Kingdoms.
+    usage: /<command> <args1>
