@@ -72,7 +72,7 @@ public class KingdomsCommand implements CommandExecutor {
                         return true;
                     }
 
-                case "list":
+                case "list": // /kingdoms list
                     try {
                         sender.sendMessage(ChatColor.GREEN + "Empire List: " + api.getList());
                         return true;

@@ -61,7 +61,8 @@ public class KingdomsAPI {
             UUID ownerID = getPlayerID(owner);
             if (ownerID != null) {
 
-                if (Arrays.stream(ColorList).anyMatch(x -> x == color)) {
+                String uppercaseColor = color.toUpperCase();
+                if (Arrays.stream(ColorList).anyMatch(x -> x == uppercaseColor)) {
 
                     if (playerHasRole(ownerID)) {
 
@@ -89,8 +90,8 @@ public class KingdomsAPI {
                     kingdomConfig.set("Kingdoms." + kingdomName + ".owner", String.valueOf(ownerID));
                     kingdomConfig.set("Kingdoms." + kingdomName + ".mayor", String.valueOf(ownerID));
 
-                    setColor(color, kingdomName);
-                    setPlayerColor(Bukkit.getPlayer(owner), color);
+                    setColor(uppercaseColor, kingdomName);
+                    setPlayerColor(Bukkit.getPlayer(owner), uppercaseColor);
 
                     saveKingdom();
 
