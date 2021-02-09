@@ -352,7 +352,7 @@ public class KingdomsAPI {
         } else { return true; }
     }
 
-    private boolean playerHasRole(UUID playerID){
+    public boolean playerHasRole(UUID playerID){
         return (playerConfig.contains(String.valueOf(playerID) + "kingdom"));
     }
 
