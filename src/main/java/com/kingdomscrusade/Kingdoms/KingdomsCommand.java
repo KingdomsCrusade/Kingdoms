@@ -1,13 +1,13 @@
 package com.kingdomscrusade.Kingdoms;
 
-import com.kingdomscrusade.Kingdoms.exceptions.empire.*;
-import com.kingdomscrusade.Kingdoms.exceptions.members.*;
-import com.kingdomscrusade.Kingdoms.exceptions.anonymous.*;
+import com.kingdomscrusade.Kingdoms.exceptions.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class KingdomsCommand implements CommandExecutor {
 
@@ -15,253 +15,381 @@ public class KingdomsCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-//        if (!(sender instanceof Player)){
-//            sender.sendMessage(ChatColor.RED + "[Kingdoms]: Only players can execute this command!");
-//            return true;
-//        }
-        Player player = (Player) sender;
 
-        if (cmd.getName().equalsIgnoreCase("kingdoms")){
-            if (args.length == 0) {
-                sender.sendMessage(ChatColor.YELLOW + "/kingdoms ?"); //Help command planned to be added
+        if(cmd.getName().equalsIgnoreCase("kingdoms")){
+            if (args.length == 0){
+
+                sender.sendMessage(ChatColor.YELLOW +
+                        "Execute command \"/kingdoms ?\" to check out how to use this plugin!"
+                );
+
                 return true;
             } else switch (args[0]){
 
-                case "new": // /kingdoms new <KINGDOM> <OWNER> <COLOR>
-                    if (player.hasPermission("Kingdoms.administration")) {
-                        if (args.length != 3) {
-                            sender.sendMessage(ChatColor.YELLOW + "Usage: /kingdoms new <NAME> <OWNER>");
+                case "new":
+                case "add":
+                case "create": // /kingdoms create <kingdomName> <playerName>
+
+                    // FUTURE Add permission check.
+
+                    if (args.length == 2) {
+
+                        if (args[1].equals("?")) {
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "This command is used by staffs to create kingdoms."
+                            );
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "Format: /kingdoms create <kingdomName> <playerName>"
+                            );
+
                             return true;
-                        } else {
-                            try {
-                                api.newKingdom(args[1], args[2], args[3]);
-                                sender.sendMessage(ChatColor.GREEN + ((args[1] + " Empire which is ruled by " + args[2] + " has been successfully registered!")));
-                                return true;
-                            } catch (empireInList e) {
-                                sender.sendMessage(ChatColor.RED + e.getMessage());
-                                return true;
-                            } catch (playerNotExist p) {
-                                sender.sendMessage(ChatColor.RED + p.getMessage());
-                                return true;
-                            } catch (playerHasKingdom p){
-                                sender.sendMessage(ChatColor.RED + p.getMessage());
-                                return true;
-                            } catch (colorNotExist c){
-                                sender.sendMessage(ChatColor.RED + c.getMessage());
-                            }
+
                         }
-                    } else {
-                        sender.sendMessage(ChatColor.RED + "You have no permission!");
+
+                    } else if (args.length != 3){
+
+                        sender.sendMessage(ChatColor.YELLOW +
+                                "Try out \"/kingdoms create ?\" to check out how this command works!"
+                        );
                         return true;
+
+                    } else {
+
+                        try {
+                            api.createKingdom(args[1], args[2]);
+                            sender.sendMessage(ChatColor.GREEN +
+                                    "Kingdom " + args[1] + " which is ruled by " + args[2] + " has been successfully added!"
+                            );
+                            return true;
+                        } catch (sqlError | kingdomNameIsUsed | playerNameNotExists | playerHasKingdom e){
+                            sender.sendMessage(ChatColor.RED + e.getMessage());
+                            return true;
+                        }
+
                     }
 
-                case "remove": // /kingdoms remove <KINGDOM>
-                    if (player.hasPermission("Kingdoms.administration")) {
-                        if (args.length == 2) {
+                case "delete":
+                case "remove": // /kingdoms remove <kingdomName>
+
+                    if (args.length != 2){
+
+                        sender.sendMessage(ChatColor.YELLOW +
+                                "Try out \"/kingdoms remove ?\" to check out how this command works!"
+                        );
+                        return true;
+
+                    } else {
+
+                        if (args[1].equals("?")) {
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "This command is used by staffs to remove kingdoms." + ChatColor.RED +
+                                    "WARNING: DELETED KINGDOMS CANNOT BE RESTORED!"
+                            );
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "Format: /kingdoms remove <kingdomName>"
+                            );
+
+                            return true;
+                        } else {
+
                             try {
                                 api.removeKingdom(args[1]);
-                                sender.sendMessage(ChatColor.GREEN + "Empire " + args[1] + " has been successfully deleted!");
+                                sender.sendMessage(ChatColor.GREEN +
+                                        "Kingdom " + args[1] + " has been successfully deleted!"
+                                );
                                 return true;
-                            } catch (empireNotExist e) {
+                            } catch (sqlError | kingdomNameNotExists e){
                                 sender.sendMessage(ChatColor.RED + e.getMessage());
                                 return true;
                             }
+
                         }
-                    } else {
-                        sender.sendMessage(ChatColor.RED + "You have no permission!");
-                        return true;
+
                     }
 
                 case "list": // /kingdoms list
-                    try {
-                        sender.sendMessage(ChatColor.GREEN + "Empire List: " + api.getList());
+
+                    if (args.length == 2) {
+
+                        if (args[1].equals("?")) {
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "This command returns a list of kingdoms registered."
+                            );
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "Format: /kingdoms list"
+                            );
+
+                        } else {
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "Try out \"/kingdoms list ?\" to check out how this command works!"
+                            );
+
+                        }
                         return true;
-                    } catch (noEmpire n){
-                        sender.sendMessage(ChatColor.RED + n.getMessage());
-                        return true;
+
+                    } else {
+
+                        try{
+
+                            List<String> kingdomList = api.getKingdomList();
+                            StringBuilder stringKingdomList = new StringBuilder();
+                            int kingdomCount = 0;
+
+                            while (kingdomCount != kingdomList.size() - 1){
+                                stringKingdomList.append(kingdomList.get(kingdomCount));
+                                stringKingdomList.append(", ");
+                                kingdomCount++;
+                            }
+
+                            stringKingdomList.append(kingdomList.get(kingdomCount));
+                            sender.sendMessage(ChatColor.GREEN + "Kingdoms registered: " + ChatColor.WHITE + stringKingdomList.toString());
+                            return true;
+
+                        } catch (noKingdomExists | sqlError e){
+                            sender.sendMessage(ChatColor.RED + e.getMessage());
+                            return true;
+                        }
+
                     }
-                case "members":
-                    if (args.length == 1){
-                        sender.sendMessage(ChatColor.YELLOW + "Usage: /kingdoms members ?");
+
+                case "info":
+                case "details": // /kingdoms details <kingdomName>
+
+                    if (args.length != 2){
+
+                        sender.sendMessage(ChatColor.YELLOW +
+                                "Try out \"/kingdoms list ?\" to check out how this command works!"
+                        );
                         return true;
-                    } else switch (args[1]){
 
-                        case "add": // /kingdoms members add <MEMBER> <KINGDOM>
-                            if (args.length == 4){
-                                if (api.checkPermission(args[2], args[3])) {
+                    } else {
+
+                        if (args[1].equals("?")) {
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "This command returns details of kingdom given."
+                            );
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "Format: /kingdoms details <kingdomName>"
+                            );
+
+                            return true;
+
+                        } else {
+
+                            try {
+                                List<String> details = api.getKingdomDetails(args[1]);
+
+                                sender.sendMessage(ChatColor.GOLD + "Details of Kingdom " + details.get(0));
+                                sender.sendMessage(ChatColor.WHITE + "OWNER: " + ChatColor.GRAY + details.get(1));
+                                sender.sendMessage(ChatColor.WHITE + "MAYOR: " + ChatColor.GRAY + details.get(2));
+
+                                return true;
+
+                            } catch (sqlError | kingdomNameNotExists e) {
+                                sender.sendMessage(ChatColor.RED + e.getMessage());
+                                return true;
+                            }
+
+                        }
+                    }
+
+                case "members": // /kingdoms members <arg1>
+
+                    if (args.length == 1){
+
+                        sender.sendMessage(ChatColor.YELLOW +
+                                "Check out \"/kingdoms members ?\" to check out its subcommands!"
+                        );
+
+                        return true;
+
+                    } else switch (args[1]) {
+
+                        case "add": // /kingdoms members add <playerName>
+
+                            if (args.length != 3) {
+
+                                sender.sendMessage(ChatColor.YELLOW +
+                                        "Try out \"/kingdoms members add ?\" to check out how this command works!"
+                                );
+
+                                return true;
+
+                            } else {
+
+                                if (args[2].equals("?")) {
+
+                                    sender.sendMessage(ChatColor.YELLOW +
+                                            "Executing this command let owners & mayors add members to their kingdom."
+                                    );
+
+                                    sender.sendMessage(ChatColor.YELLOW +
+                                            "Format: /kingdoms members add <playerName>"
+                                    );
+
+                                    return true;
+
+                                } else {
+
                                     try {
-                                        api.addMember(args[2], args[3]);
-                                        sender.sendMessage(ChatColor.GREEN + args[2] + " has been successfully added to empire " + args[3] + "!");
+                                        Player player = (Player) sender;
+                                        api.addMember(player, args[2]);
+                                        sender.sendMessage(ChatColor.GREEN +
+                                                args[2] + " has been successfully added to your kingdom!"
+                                        );
                                         return true;
-                                    } catch (empireNotExist e) {
+                                    } catch (sqlError | playerNameNotExists | playerNoPermission | playerHasKingdom e) {
                                         sender.sendMessage(ChatColor.RED + e.getMessage());
                                         return true;
-                                    } catch (memberDuplicated m) {
-                                        sender.sendMessage(ChatColor.RED + m.getMessage());
-                                        return true;
-                                    } catch (playerNotExist p) {
-                                        sender.sendMessage(ChatColor.RED + p.getMessage());
-                                        return true;
-                                    } catch (playerInAnotherKingdom p){
-                                        sender.sendMessage(ChatColor.RED + p.getMessage());
-                                        return true;
                                     }
-                                } else {
-                                    sender.sendMessage(ChatColor.RED + "You have no permission!");
-                                    return true;
+
                                 }
-                            } else {
-                                sender.sendMessage(ChatColor.YELLOW + "Usage: /kingdoms members add <MEMBER> <KINGDOM>");
-                                return true;
+
                             }
 
-                        case "remove": // /kingdoms members remove <MEMBER> <KINGDOM>
-                            if (args.length == 4){
-                                if (api.checkPermission(args[2], args[3])) {
+                        case "delete":
+                        case "remove": // /kingdoms members remove <playerName>
+
+                            if (args.length != 3) {
+
+                                sender.sendMessage(ChatColor.YELLOW +
+                                        "Try out \"/kingdoms members remove ?\" to check out how this command works!"
+                                );
+
+                                return true;
+
+                            } else {
+
+                                if (args[2].equals("?")) {
+
+                                    sender.sendMessage(ChatColor.YELLOW +
+                                            "Executing this command let owners & mayors remove members to their kingdom."
+                                    );
+
+                                    sender.sendMessage(ChatColor.YELLOW +
+                                            "Format: /kingdoms members remove <playerName>"
+                                    );
+
+                                    return true;
+
+                                } else {
+
                                     try {
-                                        api.removeMember(args[2], args[3]);
-                                        sender.sendMessage(ChatColor.GREEN + args[2] + " has been successfully removed from empire " + args[3] + "!");
+                                        Player player = (Player) sender;
+                                        api.removeMember(player, args[2]);
+                                        sender.sendMessage(ChatColor.GREEN +
+                                                args[2] + " has been successfully removed from your kingdom!"
+                                        );
                                         return true;
-                                    } catch (memberNotFound | playerNotExist m) {
-                                        sender.sendMessage(ChatColor.RED + m.getMessage());
-                                        return true;
-                                    } catch (listNotFound l) {
-                                        sender.sendMessage(ChatColor.RED + l.getMessage());
-                                        return true;
-                                    } catch (empireNotExist e) {
+                                    } catch (sqlError | playerNameNotExists | playerNoPermission | playerNotMember e) {
                                         sender.sendMessage(ChatColor.RED + e.getMessage());
                                         return true;
                                     }
-                                } else {
-                                    sender.sendMessage(ChatColor.RED + "You have no permission!");
-                                    return true;
+
                                 }
-                            } else {
-                                sender.sendMessage(ChatColor.YELLOW + "Usage: /kingdoms members remove <MEMBER> <KINGDOM>");
-                                return true;
+
                             }
 
+                        case "list": // /kingdoms members list <kingdomName>
 
-                        case "list": // /kingdoms members list <KINGDOM>
-                            if (args.length == 3){
-                                try {
-                                    String memberList = api.listMember(args[2]);
-                                    if (memberList != null) {
-                                        sender.sendMessage(ChatColor.GREEN + args[2] + " members: " + memberList);
+                            if (args.length != 3) {
+
+                                sender.sendMessage(ChatColor.YELLOW +
+                                        "Try out \"/kingdoms members list ?\" to check out how this command works!"
+                                );
+
+                                return true;
+
+                            } else {
+
+                                if (args[2].equals("?")) {
+
+                                    sender.sendMessage(ChatColor.YELLOW +
+                                            "This command returns a list of members of a kingdom."
+                                    );
+
+                                    sender.sendMessage(ChatColor.YELLOW +
+                                            "Format: /kingdoms members list <kingdomName>"
+                                    );
+
+                                    return true;
+
+                                } else {
+
+                                    try {
+
+                                        List<String> memberList = api.listMember(args[2]);
+                                        StringBuilder stringMemberList = new StringBuilder();
+                                        int memberCount = 0;
+
+                                        while (memberCount != memberList.size() - 1) {
+                                            stringMemberList.append(memberList.get(memberCount));
+                                            stringMemberList.append(", ");
+                                            memberCount++;
+                                        }
+
+                                        stringMemberList.append(memberList.get(memberCount));
+                                        sender.sendMessage(ChatColor.GREEN + "Members: " + ChatColor.WHITE + stringMemberList.toString());
                                         return true;
-                                    } else {
-                                        sender.sendMessage(ChatColor.RED + "Kingdom " + args[2] + " does not exist / Kingdom " + args[2] + " does not have any members yet.");
+
+                                    } catch (kingdomNameNotExists | sqlError | noMemberExists e) {
+                                        sender.sendMessage(ChatColor.RED + e.getMessage());
                                         return true;
                                     }
-                                } catch (listNotFound l){
-                                    sender.sendMessage(ChatColor.RED + l.getMessage());
-                                    return true;
-                                } catch (empireNotExist e){
-                                    sender.sendMessage(ChatColor.RED + e.getMessage());
-                                    return true;
+
                                 }
-                            } else {
-                                sender.sendMessage(ChatColor.YELLOW + "Usage: /kingdoms members list <KINGDOM>");
-                                return true;
+
                             }
+
 
                         case "?":
-                            sender.sendMessage(ChatColor.YELLOW + "add - add a new member to kingdom (owner / mayor)");
-                            sender.sendMessage(ChatColor.WHITE + "      Usage: /kingdoms members add <MEMBER> <KINGDOM>");
 
-                            sender.sendMessage(ChatColor.YELLOW + "remove - remove a member to kingdom (owner / mayor)");
-                            sender.sendMessage(ChatColor.WHITE + "      Usage: /kingdoms members remove <MEMBER> <KINGDOM>");
-
-                            sender.sendMessage(ChatColor.YELLOW + "list - List member of a kingdom (owner / mayor)");
-                            sender.sendMessage(ChatColor.WHITE + "      Usage: /kingdoms members list <KINGDOM>");
+                            sender.sendMessage(ChatColor.YELLOW + "This command let players manage kingdom members! ");
+                            sender.sendMessage(ChatColor.YELLOW + "Format: /kingdoms members <arg1>");
+                            sender.sendMessage(ChatColor.YELLOW + "Arguments available: add, remove/delete, list");
 
                             return true;
 
                         default:
-                            sender.sendMessage(ChatColor.YELLOW + "/kingdoms members ?");
+
+                            sender.sendMessage(ChatColor.YELLOW +
+                                    "Check out \"/kingdoms members ?\" to check out its subcommands!"
+                            );
+
                             return true;
+
                     }
 
-                case "mayor": // /kingdoms mayor <args1>
-                    if (args.length == 1){
-                        sender.sendMessage(ChatColor.YELLOW + "/kingdoms mayor ?");
-                        return true;
-                    } else {
-                        switch (args[1]){
-
-                            case "get": // /kingdoms mayor get <KINGDOM>
-                                if (args.length == 3){
-                                    try {
-                                        sender.sendMessage(ChatColor.GREEN + "Mayor of empire " + args[2] + ": " + api.getMayor(args[2]));
-                                        return true;
-                                    } catch (noMayor n){
-                                        sender.sendMessage(ChatColor.RED + n.getMessage());
-                                        sender.sendMessage(ChatColor.RED + "Please contact any admins online to fix this issue ASAP!");
-                                        return true;
-                                    } catch (empireNotExist e){
-                                        sender.sendMessage(ChatColor.RED + e.getMessage());
-                                        return true;
-                                    }
-                                }
-
-                            case "set": // /kingdoms mayor set <MEMBER> <KINGDOM>
-                                if (api.checkOwnerPermission(args[2], args[3])){
-                                    try{
-                                        api.setMayor(args[2], args[3]);
-                                        sender.sendMessage(ChatColor.GREEN + args[2] + " is now the mayor of empire " + args[3] + "!");
-                                        return true;
-                                    } catch (memberNotInList m){
-                                        sender.sendMessage(ChatColor.RED + m.getMessage());
-                                        return true;
-                                    } catch (playerNotExist p){
-                                        sender.sendMessage(ChatColor.RED + p.getMessage());
-                                        return true;
-                                    } catch (empireNotExist e){
-                                        sender.sendMessage(ChatColor.RED + e.getMessage());
-                                        return true;
-                                    }
-                                } else {
-                                    sender.sendMessage(ChatColor.RED + "You have no permission!");
-                                    return true;
-                                }
-
-                            case "?":
-                                sender.sendMessage(ChatColor.YELLOW + "get - Retrieve the name of the mayor of the empire");
-                                sender.sendMessage(ChatColor.WHITE + "      Usage: /kingdom mayor get <KINGDOM>");
-
-                                sender.sendMessage(ChatColor.YELLOW + "set - Set a new mayor of the empire (Owner)");
-                                sender.sendMessage(ChatColor.WHITE + "      Usage: /kingdom mayor set <MEMBER> <KINGDOM>");
-
-                                return true;
-
-                            default:
-                                sender.sendMessage(ChatColor.YELLOW + "/kingdoms mayor ?");
-                                return true;
-
-                        }
-                    }
-
+                    // FUTURE New arg[0] : "properties"
 
                 case "?":
-                    sender.sendMessage(ChatColor.YELLOW + "new - Add a new kingdom (admin)");
-                    sender.sendMessage(ChatColor.WHITE + "      Usage: /kingdoms new <KINGDOM> <OWNER> <COLOR>");
 
-                    sender.sendMessage(ChatColor.YELLOW + "remove - Remove a kingdom (admin)");
-                    sender.sendMessage(ChatColor.WHITE + "      Usage: /kingdoms remove <KINGDOM>");
-
-                    sender.sendMessage(ChatColor.YELLOW + "list - List existing kingdoms");
-                    sender.sendMessage(ChatColor.WHITE + "      Usage: /kingdoms list");
-
-                    sender.sendMessage(ChatColor.YELLOW + "members - /kingdoms members ?");
+                    sender.sendMessage(ChatColor.YELLOW + "Kingdoms plugin is a plugin dedicated to help players manage kingdoms and provide benefits to kingdoms registered!");
+                    sender.sendMessage(ChatColor.YELLOW + "Format: /kingdoms <arg1>");
+                    sender.sendMessage(ChatColor.YELLOW + "Arguments available: add/create, remove/delete, list, details/info, members");
 
                     return true;
 
                 default:
-                    sender.sendMessage(ChatColor.YELLOW + "/kingdoms ?"); //Help command planned to be added
-                    return true;
-            }
 
+                    sender.sendMessage(ChatColor.YELLOW +
+                            "Execute command \"/kingdoms ?\" to check out how to use this plugin!"
+                    );
+
+                    return true;
+
+            }
         }
+
         return false;
     }
 

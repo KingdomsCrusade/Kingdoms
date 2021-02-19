@@ -6,7 +6,7 @@
 
     <groupId>com.kingdomscrusade.Kingdoms</groupId>
     <artifactId>Kingdoms</artifactId>
-    <version>v0.2-alpha</version>
+    <version>v0.1.1-alpha</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -18,7 +18,6 @@
             <id>papermc</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
-
     </repositories>
 
     <dependencies>
