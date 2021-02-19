@@ -1,22 +1,14 @@
 package com.kingdomscrusade.Kingdoms;
 
-import com.kingdomscrusade.Kingdoms.exceptions.anonymous.colorNotExist;
-import com.kingdomscrusade.Kingdoms.exceptions.empire.empireInList;
-import com.kingdomscrusade.Kingdoms.exceptions.empire.empireNotExist;
-import com.kingdomscrusade.Kingdoms.exceptions.empire.noEmpire;
-import com.kingdomscrusade.Kingdoms.exceptions.empire.noMayor;
-import com.kingdomscrusade.Kingdoms.exceptions.members.*;
+import com.kingdomscrusade.Kingdoms.exceptions.*;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.inventivetalent.nicknamer.api.SimpleNickManager;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,16 +16,10 @@ import java.util.UUID;
 public class KingdomsAPI {
 
     // Variables
-    Plugin Main = KingdomsMain.getInstance();
-    SimpleNickManager nick = new SimpleNickManager(Main);
+//    Plugin plugin = KingdomsMain.getInstance();
+    Connection sql = KingdomsMain.getConnection();
 
-    File kingdomFile = new File(Main.getDataFolder(), "/kingdoms.yml");
-    FileConfiguration kingdomConfig = YamlConfiguration.loadConfiguration(kingdomFile);
-
-    File playerFile = new File(Main.getDataFolder()+"/player.yml");
-    FileConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-
-    String [] ColorList = {
+    String[] ColorList = {
             "DARK_RED",
             "RED",
             "GOLD",
@@ -52,420 +38,381 @@ public class KingdomsAPI {
             "BLACK"
     };
 
-
     //Kingdoms
-    public void newKingdom(String kingdomName, String owner, String color) throws empireInList, playerNotExist, playerHasKingdom, colorNotExist { //Planned to change to UUID format
+    public void createKingdom(String kingdomName, String playerName) throws sqlError, kingdomNameIsUsed, playerNameNotExists, playerHasKingdom {
 
-        if (!(kingdomConfig.contains("Kingdoms." + kingdomName))) {
+        try {
 
-            UUID ownerID = getPlayerID(owner);
-            if (ownerID != null) {
+            UUID playerUUID = Bukkit.getPlayerUniqueId(playerName);
+            if (playerUUID == null) {throw new playerNameNotExists();}
+            if (checkPlayerExistence(playerUUID)) {
 
-                String uppercaseColor = color.toUpperCase();
-                if (Arrays.stream(ColorList).anyMatch(x -> x == uppercaseColor)) {
+                if (!(checkKingdomExistence(kingdomName))) {
 
-                    if (playerHasRole(ownerID)) {
+                    if (!(playerHasKingdom(playerUUID))) {
 
-                        String playerRole = getPlayerRole(ownerID);
+                        //Insert new kingdom into KingdomData
+                        PreparedStatement insertNewKingdom = sql.prepareStatement(
+                                "INSERT INTO KingdomData (KingdomData.Kingdom, KingdomData.Owner) VALUES (?, ?)"
+                        );
+                        insertNewKingdom.setString(1, kingdomName);
+                        insertNewKingdom.setString(2, playerUUID.toString());
+                        insertNewKingdom.executeUpdate();
 
-                        if (playerIsOwner(ownerID, playerRole) || playerIsMayor(ownerID, playerRole)) {
-                            throw new playerHasKingdom("This player is already managing another kingdom!");
+                        //Update player's kingdom to new kingdom
+                        PreparedStatement updatePlayerKingdom = sql.prepareStatement(
+                                "UPDATE PlayerData SET PlayerData.Kingdom = ?, PlayerData.Pos = 'Owner' WHERE PlayerData.PlayerUUID = ?"
+                        );
+                        updatePlayerKingdom.setString(1, kingdomName);
+                        updatePlayerKingdom.setString(2, playerUUID.toString());
+                        updatePlayerKingdom.executeUpdate();
 
-                        } else {
-                            //remove user from another kingdom's list
-                            List<String> anotherMemberList = kingdomConfig.getStringList("Kingdoms." + getPlayerRole(ownerID) + ".members");
-                            anotherMemberList.remove(String.valueOf(ownerID));
-                            kingdomConfig.set("Kingdoms." + kingdomName + ".members", anotherMemberList);
-                        }
-
+                    } else {
+                        throw new playerHasKingdom();
                     }
 
-                    //give role
-                    addPlayerRole(ownerID, kingdomName);
-
-                    List<String> list = kingdomConfig.getStringList("KingdomsList");
-                    list.add(kingdomName);
-                    kingdomConfig.set("KingdomsList", list);
-
-                    kingdomConfig.set("Kingdoms." + kingdomName + ".owner", String.valueOf(ownerID));
-                    kingdomConfig.set("Kingdoms." + kingdomName + ".mayor", String.valueOf(ownerID));
-
-                    setColor(uppercaseColor, kingdomName);
-                    setPlayerColor(Bukkit.getPlayer(owner), uppercaseColor);
-
-                    saveKingdom();
-
                 } else {
-                    throw new colorNotExist("Wrong color name!");
+                    throw new kingdomNameIsUsed();
                 }
-            } else{
-                throw new playerNotExist("This player does not exist!");
-            }
-        } else {
-            throw new empireInList("An empire with same name is in list!");
-        }
-    }
 
-    public void removeKingdom(String kingdomName) throws empireNotExist {
-
-        if (kingdomConfig.contains("Kingdoms." + kingdomName)){
-
-            //remove all members and owner mayor's role
-            UUID owner = (UUID) kingdomConfig.get("Kingdoms." + kingdomName + ".owner");
-            UUID mayor = (UUID) kingdomConfig.get("Kingdoms." + kingdomName + ".mayor");
-            List<UUID> members = (List<UUID>) kingdomConfig.get("Kingdoms." + kingdomName + ".members");
-
-            removePlayerRole(owner);
-            clearPlayerColor(Bukkit.getPlayer(owner));
-
-            removePlayerRole(mayor);
-            clearPlayerColor(Bukkit.getPlayer(mayor));
-
-            Integer i = 0;
-            while (i != members.size() - 1){
-                removePlayerRole(members.get(i));
-                clearPlayerColor(Bukkit.getPlayer(members.get(i)));
-                i++;
-            }
-
-            kingdomConfig.set("Kingdoms." + kingdomName, null);
-
-            List<String> list = kingdomConfig.getStringList("KingdomsList");
-            list.remove(kingdomName);
-            kingdomConfig.set("KingdomsList", list);
-
-            saveKingdom();
-        } else {
-            throw new empireNotExist("Empire name given does not exist!");
-        }
-
-    }
-
-    public String getList() throws noEmpire {
-        if (kingdomConfig.contains("KingdomsList")) {
-            List<?> list = kingdomConfig.getStringList("KingdomsList");
-            StringBuilder sb = new StringBuilder();
-
-            int i = 0;
-            while (i < list.size() - 1) {
-                sb.append(list.get(i));
-                sb.append(", ");
-                i++;
-            }
-            sb.append(list.get(i));
-
-            String result = sb.toString();
-            return result;
-        } else {
-            throw new noEmpire("None empire exist!");
-        }
-    }
-
-    // Owner & Mayor
-    public String getMayor(String kingdomName) throws empireNotExist, noMayor {
-
-        if(kingdomConfig.contains("Kingdoms." + kingdomName)) {
-            if (kingdomConfig.contains("Kingdoms." + kingdomName + ".mayor")) {
-                return getPlayerName((UUID) kingdomConfig.get("Kingdoms." + kingdomName + ".mayor"));
             } else {
-                throw new noMayor("This empire has no mayor!");
+                throw new playerNameNotExists();
             }
-        } else {
-            throw new empireNotExist("Empire name given does not exist!");
+        } catch (SQLException s) {
+            s.printStackTrace();
+            throw new sqlError();
         }
 
     }
 
-    public void setMayor(String member, String kingdomName) throws playerNotExist, empireNotExist, memberNotInList {
+    public void removeKingdom(String kingdomName) throws kingdomNameNotExists, sqlError {
 
-        if (kingdomConfig.contains("Kingdoms." + kingdomName)){
+        try {
 
-            UUID memberID = getPlayerID(member);
-            if (memberID != null){
+            if (checkKingdomExistence(kingdomName)) {
 
-                List<String> list= kingdomConfig.getStringList("Kingdoms." + kingdomName + ".members");
-                if (list.contains(String.valueOf(memberID))){
+                // Delete the kingdom from KingdomData Table
+                PreparedStatement deleteKingdom = sql.prepareStatement(
+                        "DELETE FROM KingdomData WHERE KingdomData.Kingdom = ?"
+                );
+                deleteKingdom.setString(1, kingdomName);
+                deleteKingdom.executeUpdate();
 
-                    kingdomConfig.set("Kingdoms." + kingdomName + ".mayor", String.valueOf(memberID));
-                    list.remove(String.valueOf(memberID));
-                    kingdomConfig.set("Kingdoms." + kingdomName + ".members", list);
+                //Update all members kingdom
+                PreparedStatement updateRole = sql.prepareStatement(
+                        "UPDATE PlayerData SET PlayerData.Kingdom = null, PlayerData.Pos = null WHERE PlayerData.Kingdom = ?"
+                );
+                updateRole.setString(1, kingdomName);
+                updateRole.executeUpdate();
 
-                    saveKingdom();
+            } else {
+                throw new kingdomNameNotExists();
+            }
 
-                } else {
-                    throw new memberNotInList("Player is not a member of the empire!");
+        } catch (SQLException s) {
+            s.printStackTrace();
+            throw new sqlError();
+        }
+
+    }
+
+
+    public List<String> getKingdomList() throws sqlError, noKingdomExists {
+
+        try {
+
+            PreparedStatement retrieveList = sql.prepareStatement(
+                    "SELECT KingdomData.Kingdom FROM KingdomData"
+            );
+            ResultSet KingdomList = retrieveList.executeQuery();
+            List<String> resultList = new ArrayList<>();
+
+            if (KingdomList.next()) {
+
+                do {
+                    resultList.add(KingdomList.getString("Kingdom"));
+                } while (KingdomList.next());
+
+            } else {
+
+                throw new noKingdomExists();
+
+            }
+
+            return resultList;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new sqlError();
+        }
+    }
+
+    public List<String> getKingdomDetails(String kingdomName) throws kingdomNameNotExists, sqlError {
+
+        String Kingdom = null, OwnerName = null, MayorName = null;
+
+        try {
+
+            if (checkKingdomExistence(kingdomName)) {
+
+                PreparedStatement retrieveKingdomDetail = sql.prepareStatement(
+                        "SELECT * FROM KingdomData WHERE KingdomData.Kingdom = ?"
+                );
+                retrieveKingdomDetail.setString(1, kingdomName);
+                ResultSet KingdomDetail = retrieveKingdomDetail.executeQuery();
+                List<String> detailReturn = new ArrayList<>();
+
+                // Assigning all variables
+
+                if (KingdomDetail.next()) {
+                    
+                    Kingdom = KingdomDetail.getString("Kingdom");
+
+                    String OwnerString = KingdomDetail.getString("Owner");
+                    if (OwnerString != null) {
+                        OwnerName = getPlayerName(OwnerString);
+                    } else {
+                        OwnerName = "null";
+                    }
+
+                    String MayorString = KingdomDetail.getString("Mayor");
+                    if (MayorString != null) {
+                        MayorName = getPlayerName(MayorString);
+                    } else {
+                        MayorName = "null";
+                    }
+                    
                 }
+
+                // Adding them to list
+                detailReturn.add(Kingdom);
+                detailReturn.add(OwnerName);
+                detailReturn.add(MayorName);
+
+                return detailReturn;
+
             } else {
-                throw new playerNotExist("This player does not exist!");
+                throw new kingdomNameNotExists();
             }
-        } else {
-            throw new empireNotExist("Empire name given does not exist!");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new sqlError();
         }
+
     }
 
+    // Properties
 
     //Members
-    public void addMember(String newMember, String kingdomName) throws empireNotExist, memberDuplicated, playerNotExist, playerInAnotherKingdom { //Plan to change to UUID format
+    public void addMember(Player sender, String playerName) throws sqlError, playerNoPermission, playerNameNotExists, playerHasKingdom {
 
-        if (kingdomConfig.contains("Kingdoms." + kingdomName)){
-
-            UUID memberID = getPlayerID(newMember);
-            if (memberID != null) {
-
-                if (!(playerHasOtherRole(memberID, kingdomName))) {
-
-                    List<String> list = kingdomConfig.getStringList("Kingdoms." + kingdomName + ".members");
-                    if (!(list.contains(String.valueOf(memberID)))) {
-
-                        addPlayerRole(memberID, kingdomName);
-
-                        list.add(String.valueOf(memberID));
-                        kingdomConfig.set("Kingdoms." + kingdomName + ".members", list);
-                        addPlayerRole(memberID, kingdomName);
-                        setPlayerColor(Bukkit.getPlayer(newMember), kingdomName);
-
-                        saveKingdom();
-
-                    } else {
-                        throw new memberDuplicated("Same player has been found in this empire's member list!");
-                    }
-
-                } else {
-                    throw new playerInAnotherKingdom("Player is a member of another kingdom!");
-                }
-
-            } else {
-                throw new playerNotExist("This player does not exist!");
-            }
-
-        } else{
-            throw new empireNotExist("Empire name given does not exist!");
-        }
-    }
-
-    public void removeMember(String member, String kingdomName) throws memberNotFound, listNotFound, empireNotExist, playerNotExist {
-
-        if (kingdomConfig.contains("Kingdoms." + kingdomName)){
-
-            if (kingdomConfig.contains("Kingdoms." + kingdomName + ".members")){
-
-                UUID memberID = getPlayerID(member);
-                if (memberID != null) {
-
-                    List<String> list = kingdomConfig.getStringList("Kingdoms." + kingdomName + ".members");
-                    if (list.contains(String.valueOf(memberID))) {
-
-                        removePlayerRole(memberID);
-
-                        list.remove(String.valueOf(memberID));
-                        kingdomConfig.set("Kingdoms." + kingdomName + ".members", list);
-
-                        clearPlayerColor(Bukkit.getPlayer(member));
-
-                        saveKingdom();
-
-                    } else {
-                        throw new memberNotFound("Member not found in this empire's member list!");
-                    }
-
-                } else {
-                    throw new playerNotExist("This player does not exist!");
-                }
-
-            } else {
-                throw new listNotFound("This empire currently has no members!");
-            }
-
-        } else {
-            throw new empireNotExist("Empire name given does not exist!");
-        }
-
-    }
-
-    public String listMember(String kingdomName) throws listNotFound, empireNotExist {
-
-        if (kingdomConfig.contains("Kingdoms." + kingdomName)){
-
-            if (kingdomConfig.contains("Kingdoms." + kingdomName + ".members")){
-
-                List<?> list = kingdomConfig.getStringList("Kingdoms." + kingdomName + ".members");
-                StringBuilder stringName = new StringBuilder();
-                int i = 0;
-                while (i < list.size() - 1){
-                    stringName.append(getPlayerName((UUID) list.get(i)));
-                    stringName.append(", ");
-                    i++;
-                }
-                stringName.append(getPlayerName((UUID) list.get(i)));
-
-                String result = stringName.toString();
-                return result;
-
-            } else{
-                throw new listNotFound("This empire currently has no members!");
-            }
-
-        } else {
-            throw new empireNotExist("Empire name given does not exist!");
-        }
-
-    }
-
-
-    //YAML file
-    private void saveKingdom() {
         try {
-            kingdomConfig.save(kingdomFile);
-        } catch (IOException e) {
+
+            if (checkPlayerPos(sender.getUniqueId())) {
+
+                UUID playerUUID = Bukkit.getPlayerUniqueId(playerName);
+                if (playerUUID == null) {throw new playerNameNotExists();}
+                if (checkPlayerExistence(playerUUID)) {
+
+                    if (!(playerHasKingdom(playerUUID))) {
+
+                        PreparedStatement addPlayer = sql.prepareStatement(
+                                "UPDATE PlayerData SET PlayerData.Kingdom = ?, PlayerData.Pos = 'Member' WHERE PlayerData.PlayerUUID = ?"
+                        );
+                        addPlayer.setString(1, getPlayerKingdom(sender.getUniqueId()));
+                        addPlayer.setString(2, playerUUID.toString());
+                        addPlayer.executeUpdate();
+
+                    } else {
+                        throw new playerHasKingdom();
+                    }
+
+                } else {
+                    throw new playerNameNotExists();
+                }
+
+            } else {
+                throw new playerNoPermission();
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
+            throw new sqlError();
         }
+
     }
 
-    private void savePlayer(){
-        try{
-            playerConfig.save(playerFile);
-        } catch (IOException e) {
+    public void removeMember(Player sender, String playerName) throws playerNameNotExists, playerNotMember, playerNoPermission, sqlError {
+
+        try {
+
+            if (checkPlayerPos(sender.getUniqueId())) {
+
+                UUID playerUUID = Bukkit.getPlayerUniqueId(playerName);
+                if (playerUUID == null) {throw new playerNameNotExists();}
+                if (checkPlayerExistence(playerUUID)) {
+
+                    if (getPlayerKingdom(sender.getUniqueId())   .equals   (getPlayerKingdom(playerUUID))){
+
+                        PreparedStatement addPlayer = sql.prepareStatement(
+                                "UPDATE PlayerData SET PlayerData.Kingdom = null, PlayerData.Pos = null WHERE PlayerData.PlayerUUID = ?"
+                        );
+                        addPlayer.setString(1, playerUUID.toString());
+                        addPlayer.executeUpdate();
+
+                    } else {
+                        throw new playerNotMember();
+                    }
+
+                } else {
+                    throw new playerNameNotExists();
+                }
+
+            } else {
+                throw new playerNoPermission();
+            }
+
+        } catch (SQLException e) {
             e.printStackTrace();
+            throw new sqlError();
         }
+
+    }
+
+    public List<String> listMember(String kingdomName) throws noMemberExists, sqlError, kingdomNameNotExists {
+
+        try {
+
+            if (checkKingdomExistence(kingdomName)) {
+
+                PreparedStatement retrieveList = sql.prepareStatement(
+                        "SELECT PlayerData.PlayerName FROM PlayerData WHERE PlayerData.Kingdom = ?"
+                );
+                retrieveList.setString(1, kingdomName);
+                ResultSet memberList = retrieveList.executeQuery();
+                List<String> resultList = new ArrayList<>();
+
+                if (memberList.next()) {
+
+                    do {
+                        resultList.add(memberList.getString("PlayerName"));
+                    } while (memberList.next());
+
+                } else {
+
+                    throw new noMemberExists();
+
+                }
+
+                return resultList;
+
+            } else {
+                throw new kingdomNameNotExists();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new sqlError();
+        }
+
     }
 
     // Convenience
-    private void addPlayerRole(UUID playerID, String kingdomName){
-       playerConfig.set(String.valueOf(playerID) + "kingdom", kingdomName);
-       savePlayer();
+    private boolean checkKingdomExistence(String kingdomName) throws SQLException {
+
+        PreparedStatement checkExistence = sql.prepareStatement(
+                "SELECT KingdomData.Kingdom FROM KingdomData WHERE KingdomData.Kingdom = ?"
+        );
+        checkExistence.setString(1, kingdomName);
+        return checkExistence.executeQuery().next();
+
     }
 
-    private void removePlayerRole(UUID playerID){
-        playerConfig.set(String.valueOf(playerID) + "kingdom", null);
-        savePlayer();
+    private boolean checkPlayerExistence(UUID playerID) throws SQLException {
+
+        PreparedStatement checkExistence = sql.prepareStatement(
+                "SELECT PlayerData.PlayerUUID FROM PlayerData WHERE PlayerData.PlayerUUID = ?"
+        );
+        checkExistence.setString(1, playerID.toString());
+        return checkExistence.executeQuery().next();
+
     }
 
-    private boolean playerHasSameRole(UUID playerID, String kingdomName){
-        if (playerConfig.getString(String.valueOf(playerID) + "kingdom") == kingdomName){
-            return false;
-        } else { return true; }
-    }
+    private String getPlayerName(UUID playerID) throws SQLException {
 
-    private boolean playerHasOtherRole(UUID playerID, String kingdomName){
-        if (playerConfig.getString(String.valueOf(playerID) + "kingdom") != kingdomName){
-            return false;
-        } else { return true; }
-    }
+        PreparedStatement getName = sql.prepareStatement(
+                "SELECT PlayerData.PlayerName FROM PlayerData WHERE PlayerData.PlayerUUID = ?"
+        );
+        getName.setString(1, playerID.toString());
+        ResultSet player = getName.executeQuery();
 
-    public boolean playerHasRole(UUID playerID){
-        return (playerConfig.contains(String.valueOf(playerID) + "kingdom"));
-    }
-
-    public String getPlayerRole(UUID playerID){
-        return (playerConfig.getString(String.valueOf(playerID) + "kingdom"));
-    }
-
-    public UUID getPlayerID(String name){
-        return Bukkit.getPlayerUniqueId(name);
-    }
-
-    private String getPlayerName(UUID id){
-        return Bukkit.getPlayer(id).getName();
-    }
-
-    private boolean playerIsOwner(UUID id, String kingdomName){
-        return (kingdomConfig.getString("Kingdoms." + kingdomName + ".owner") == String.valueOf(id));
-    }
-
-    private boolean playerIsMayor(UUID id, String kingdomName){
-        return (kingdomConfig.getString("Kingdoms." + kingdomName + ".mayor") == String.valueOf(id));
-    }
-
-    public boolean checkOwnerPermission(String name, String kingdom){
-        String player = String.valueOf(getPlayerID(name));
-        return kingdomConfig.getString("Kingdoms." + kingdom + ".owner") == player;
-    }
-
-
-    public boolean checkPermission(String name, String kingdom){
-        String player = String.valueOf(getPlayerID(name));
-        return kingdomConfig.getString("Kingdoms." + kingdom + ".owner") == player || kingdomConfig.getString("Kingdoms." + kingdom + ".mayor") == player;
-    }
-
-    public void setColor(String color, String kingdom){
-        kingdomConfig.set("Kingdoms." + kingdom + ".color", color);
-    }
-
-    public String getColor(String kingdom){
-        return kingdomConfig.getString("Kingdoms." + kingdom + ".color");
-    }
-
-    public void setPlayerColor(Player player, String kingdom){
-        switch (getColor(kingdom)){
-
-            case "DARK_RED":
-                nick.setNick(player.getUniqueId(), ChatColor.DARK_RED + player.getName());
-                break;
-
-            case "RED":
-                nick.setNick(player.getUniqueId(), ChatColor.RED + player.getName());
-                break;
-
-            case "GOLD":
-                nick.setNick(player.getUniqueId(), ChatColor.GOLD + player.getName());
-                break;
-
-            case "YELLOW":
-                nick.setNick(player.getUniqueId(), ChatColor.YELLOW + player.getName());
-                break;
-
-            case "DARK_GREEN":
-                nick.setNick(player.getUniqueId(), ChatColor.DARK_GREEN + player.getName());
-                break;
-
-            case "GREEN":
-                nick.setNick(player.getUniqueId(), ChatColor.GREEN + player.getName());
-                break;
-
-            case "AQUA":
-                nick.setNick(player.getUniqueId(), ChatColor.AQUA + player.getName());
-                break;
-
-            case "DARK_AQUA":
-                nick.setNick(player.getUniqueId(), ChatColor.DARK_AQUA + player.getName());
-                break;
-
-            case "DARK_BLUE":
-                nick.setNick(player.getUniqueId(), ChatColor.DARK_BLUE + player.getName());
-                break;
-
-            case "BLUE":
-                nick.setNick(player.getUniqueId(), ChatColor.BLUE + player.getName());
-                break;
-
-            case "LIGHT_PURPLE":
-                nick.setNick(player.getUniqueId(), ChatColor.LIGHT_PURPLE + player.getName());
-                break;
-
-            case "DARK_PURPLE":
-                nick.setNick(player.getUniqueId(), ChatColor.DARK_PURPLE + player.getName());
-                break;
-
-            case "WHITE":
-                nick.setNick(player.getUniqueId(), ChatColor.WHITE + player.getName());
-                break;
-
-            case "GRAY":
-                nick.setNick(player.getUniqueId(), ChatColor.GRAY + player.getName());
-                break;
-
-            case "DARK_GRAY":
-                nick.setNick(player.getUniqueId(), ChatColor.DARK_GRAY + player.getName());
-                break;
-
-            case "BLACK":
-                nick.setNick(player.getUniqueId(), ChatColor.BLACK + player.getName());
-                break;
-
+        if (player.next()){
+            return player.getString("PlayerName");
         }
+
+        return null;
+
     }
 
-    private void clearPlayerColor(Player player){
-        nick.removeNick(player.getUniqueId());
+    private String getPlayerName(String playerID) throws SQLException {
+
+        PreparedStatement getName = sql.prepareStatement(
+                "SELECT PlayerData.PlayerName FROM PlayerData WHERE PlayerData.PlayerUUID = ?"
+        );
+        getName.setString(1, playerID);
+        ResultSet player = getName.executeQuery();
+
+        if (player.next()){
+            return player.getString("PlayerName");
+        }
+
+        return null;
+
     }
+
+    private boolean playerHasKingdom(UUID playerID) throws SQLException {
+
+        String playerKingdom = getPlayerKingdom(playerID);
+        return playerKingdom != null;
+
+    }
+
+    public String getPlayerKingdom(UUID playerID) throws SQLException {
+
+        String playerKingdom = null;
+
+        PreparedStatement getKingdom = sql.prepareStatement(
+                "SELECT PlayerData.Kingdom FROM PlayerData WHERE PlayerData.PlayerUUID = ?"
+        );
+        getKingdom.setString(1, playerID.toString());
+        ResultSet player = getKingdom.executeQuery();
+
+        if (player.next()){
+            playerKingdom = player.getString("Kingdom");
+        }
+
+        return playerKingdom;
+
+    }
+
+    private boolean checkPlayerPos(UUID playerID) throws SQLException {
+
+        String playerPos = null;
+
+        PreparedStatement checkPos = sql.prepareStatement(
+                "SELECT PlayerData.Pos FROM PlayerData WHERE PlayerData.PlayerUUID = ?"
+        );
+        checkPos.setString(1, playerID.toString());
+        ResultSet player = checkPos.executeQuery();
+
+        if (player.next()){
+            playerPos = player.getString("Pos");
+        }
+        if (playerPos == null) { return false; }
+
+        return playerPos.equals("Owner") || playerPos.equals("Mayor");
+
+    }
+
 }

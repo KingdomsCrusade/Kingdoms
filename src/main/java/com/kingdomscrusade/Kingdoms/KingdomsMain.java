@@ -1,56 +1,78 @@
 package com.kingdomscrusade.Kingdoms;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 
 public class KingdomsMain extends JavaPlugin {
 
     private static Plugin instance;
+    private static Connection connection;
+    String driver, url, username, password;
 
     @Override
     public void onEnable(){
+
+        //Config file Initiation
+        saveDefaultConfig();
+
+        //Database Initiation
+        DatabaseInit();
+
+        //Plugin Initiation
         instance = this;
-        init();
         getCommand("kingdoms").setExecutor(new KingdomsCommand());
         getServer().getPluginManager().registerEvents(new KingdomsEvent(), this);
-
         getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "[Kingdoms]: Plugin is now enabled!");
 
     }
 
-    private void init() {
+    private void DatabaseInit(){
 
-        if(!this.getDataFolder().exists()){
-            this.getDataFolder().mkdir();
-        }
+        FileConfiguration configuration = getConfig();
 
-        File kingdomFile = new File(this.getDataFolder()+"/kingdoms.yml");
-        FileConfiguration kingdomConfig = YamlConfiguration.loadConfiguration(kingdomFile);
-        if (!kingdomFile.exists()){
-            try {
-                kingdomFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+        driver      = configuration.getString   ("Database.driver");
+        url         = configuration.getString   ("Database.url");
+        username    = configuration.getString   ("Database.username");
+        password    = configuration.getString   ("Database.password");
+
+        try{
+
+            synchronized (this){
+                if (getConnection() != null && !getConnection().isClosed()){
+                    return;
+                }
+
+                //Getting Driver
+                Class.forName(driver);
+
+                //Connecting to the Database
+                Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Attempting to connect to the database...");
+
+                setConnection(DriverManager.getConnection
+                        (url, username, password)
+                );
+                Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "DATABASE CONNECTED");
             }
-        }
 
-        File playerFile = new File(this.getDataFolder()+"/player.yml");
-        FileConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-        if (!playerFile.exists()){
-            try {
-                playerFile.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (SQLException | ClassNotFoundException s){
+            s.printStackTrace();
         }
+    }
 
+    public static Connection getConnection(){
+        return connection;
+    }
+
+    public void setConnection(Connection connection){
+        KingdomsMain.connection = connection;
     }
 
     public static Plugin getInstance(){

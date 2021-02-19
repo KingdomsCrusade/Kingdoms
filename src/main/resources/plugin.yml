@@ -1,12 +1,8 @@
 name: Kingdoms
 main: com.kingdomscrusade.Kingdoms.KingdomsMain
-version: v0.2-alpha
+version: 0.1.1-alpha
 author: "Little Hill MYR"
 api-version: 1.16
-depend:
-  - NickNamer
-softdepend:
-  - NickNamer
 commands:
   kingdoms:
     description: Give a list of active Kingdoms.
