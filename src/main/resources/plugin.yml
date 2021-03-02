@@ -1,9 +1,14 @@
-name: Kingdoms
-main: com.kingdomscrusade.Kingdoms.KingdomsMain
-version: 0.1.1-alpha
-author: "Little Hill MYR"
+name: ${project.name}
+main: net.kingdomscrusade.Kingdoms.KingdomsMain
+version: ${project.version}
+author: Little Hill MYR
+description: ${project.description}
+website: ${project.url}
 api-version: 1.16
 commands:
   kingdoms:
     description: Give a list of active Kingdoms.
-    usage: /<command> <args1>
+    usage: /<command> ? for more info.
+  kc:
+    description: Send message in your kingdoms chat room!
+    usage: /<command> [message]

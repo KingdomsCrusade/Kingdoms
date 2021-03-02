@@ -1,20 +1,22 @@
-package com.kingdomscrusade.Kingdoms;
+package net.kingdomscrusade.Kingdoms.commands;
 
-import com.kingdomscrusade.Kingdoms.exceptions.*;
+import net.kingdomscrusade.Kingdoms.KingdomsCore;
+import net.kingdomscrusade.Kingdoms.exceptions.*;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class KingdomsCommand implements CommandExecutor {
+public class kingdoms implements CommandExecutor {
 
-    KingdomsAPI api = new KingdomsAPI();
+    KingdomsCore core = new KingdomsCore();
 
     @Override
-    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
 
         if(cmd.getName().equalsIgnoreCase("kingdoms")){
             if (args.length == 0){
@@ -58,7 +60,7 @@ public class KingdomsCommand implements CommandExecutor {
                     } else {
 
                         try {
-                            api.createKingdom(args[1], args[2]);
+                            core.createKingdom(args[1], args[2]);
                             sender.sendMessage(ChatColor.GREEN +
                                     "Kingdom " + args[1] + " which is ruled by " + args[2] + " has been successfully added!"
                             );
@@ -97,7 +99,7 @@ public class KingdomsCommand implements CommandExecutor {
                         } else {
 
                             try {
-                                api.removeKingdom(args[1]);
+                                core.removeKingdom(args[1]);
                                 sender.sendMessage(ChatColor.GREEN +
                                         "Kingdom " + args[1] + " has been successfully deleted!"
                                 );
@@ -138,7 +140,7 @@ public class KingdomsCommand implements CommandExecutor {
 
                         try{
 
-                            List<String> kingdomList = api.getKingdomList();
+                            List<String> kingdomList = core.getKingdomList();
                             StringBuilder stringKingdomList = new StringBuilder();
                             int kingdomCount = 0;
 
@@ -186,7 +188,7 @@ public class KingdomsCommand implements CommandExecutor {
                         } else {
 
                             try {
-                                List<String> details = api.getKingdomDetails(args[1]);
+                                List<String> details = core.getKingdomDetails(args[1]);
 
                                 sender.sendMessage(ChatColor.GOLD + "Details of Kingdom " + details.get(0));
                                 sender.sendMessage(ChatColor.WHITE + "OWNER: " + ChatColor.GRAY + details.get(1));
@@ -242,7 +244,7 @@ public class KingdomsCommand implements CommandExecutor {
 
                                     try {
                                         Player player = (Player) sender;
-                                        api.addMember(player, args[2]);
+                                        core.addMember(player, args[2]);
                                         sender.sendMessage(ChatColor.GREEN +
                                                 args[2] + " has been successfully added to your kingdom!"
                                         );
@@ -285,7 +287,7 @@ public class KingdomsCommand implements CommandExecutor {
 
                                     try {
                                         Player player = (Player) sender;
-                                        api.removeMember(player, args[2]);
+                                        core.removeMember(player, args[2]);
                                         sender.sendMessage(ChatColor.GREEN +
                                                 args[2] + " has been successfully removed from your kingdom!"
                                         );
@@ -327,7 +329,7 @@ public class KingdomsCommand implements CommandExecutor {
 
                                     try {
 
-                                        List<String> memberList = api.listMember(args[2]);
+                                        List<String> memberList = core.listMember(args[2]);
                                         StringBuilder stringMemberList = new StringBuilder();
                                         int memberCount = 0;
 

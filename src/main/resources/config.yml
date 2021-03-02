@@ -4,3 +4,9 @@ Database:
   url     : jdbc:mysql://localhost:3306
   username: username
   password: password
+
+# Configuration of Discord connection
+Discord:
+  token: token
+  prefix: >
+  kingdomOwnerRoleID: 000000000000000000

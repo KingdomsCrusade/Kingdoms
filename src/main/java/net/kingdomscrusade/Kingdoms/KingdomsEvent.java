@@ -1,4 +1,4 @@
-package com.kingdomscrusade.Kingdoms;
+package net.kingdomscrusade.Kingdoms;
 
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 public class KingdomsEvent implements Listener {
 
-    Connection sql = KingdomsMain.getConnection();
+    Connection sql = KingdomsMain.getDatabaseConnection();
 
     @EventHandler
     public void playerLogin (PlayerJoinEvent event){

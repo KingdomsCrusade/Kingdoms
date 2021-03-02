@@ -1,4 +1,4 @@
-package com.kingdomscrusade.Kingdoms.exceptions;
+package net.kingdomscrusade.Kingdoms.exceptions;
 
 public class playerNotMember extends Exception{
     public playerNotMember(){

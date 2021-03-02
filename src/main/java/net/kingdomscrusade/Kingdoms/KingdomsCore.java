@@ -1,6 +1,6 @@
-package com.kingdomscrusade.Kingdoms;
+package net.kingdomscrusade.Kingdoms;
 
-import com.kingdomscrusade.Kingdoms.exceptions.*;
+import net.kingdomscrusade.Kingdoms.exceptions.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class KingdomsAPI {
+public class KingdomsCore {
 
     // Variables
 //    Plugin plugin = KingdomsMain.getInstance();
-    Connection sql = KingdomsMain.getConnection();
+    Connection sql = KingdomsMain.getDatabaseConnection();
 
     String[] ColorList = {
             "DARK_RED",
@@ -44,7 +44,7 @@ public class KingdomsAPI {
         try {
 
             UUID playerUUID = Bukkit.getPlayerUniqueId(playerName);
-            if (playerUUID == null) {throw new playerNameNotExists();}
+            if (playerUUID == null) throw new playerNameNotExists();
             if (checkPlayerExistence(playerUUID)) {
 
                 if (!(checkKingdomExistence(kingdomName))) {
@@ -165,7 +165,7 @@ public class KingdomsAPI {
                 // Assigning all variables
 
                 if (KingdomDetail.next()) {
-                    
+
                     Kingdom = KingdomDetail.getString("Kingdom");
 
                     String OwnerString = KingdomDetail.getString("Owner");
@@ -181,7 +181,7 @@ public class KingdomsAPI {
                     } else {
                         MayorName = "null";
                     }
-                    
+
                 }
 
                 // Adding them to list
@@ -212,7 +212,7 @@ public class KingdomsAPI {
             if (checkPlayerPos(sender.getUniqueId())) {
 
                 UUID playerUUID = Bukkit.getPlayerUniqueId(playerName);
-                if (playerUUID == null) {throw new playerNameNotExists();}
+                if (playerUUID == null) throw new playerNameNotExists();
                 if (checkPlayerExistence(playerUUID)) {
 
                     if (!(playerHasKingdom(playerUUID))) {
@@ -250,7 +250,7 @@ public class KingdomsAPI {
             if (checkPlayerPos(sender.getUniqueId())) {
 
                 UUID playerUUID = Bukkit.getPlayerUniqueId(playerName);
-                if (playerUUID == null) {throw new playerNameNotExists();}
+                if (playerUUID == null) throw new playerNameNotExists();
                 if (checkPlayerExistence(playerUUID)) {
 
                     if (getPlayerKingdom(sender.getUniqueId())   .equals   (getPlayerKingdom(playerUUID))){
@@ -318,8 +318,54 @@ public class KingdomsAPI {
 
     }
 
+    public String getDiscordKingdom(String channelID) throws sqlError {
+
+        try {
+
+            PreparedStatement getName = sql.prepareStatement(
+                    "SELECT KingdomData.Kingdom FROM KingdomData WHERE KingdomData.DiscordChannelID = ?"
+            );
+            getName.setString(1, channelID);
+            ResultSet getNameResult = getName.executeQuery();
+            if (getNameResult.next()) {
+                return getNameResult.getString("Kingdom");
+            }
+            return null;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new sqlError();
+        }
+
+    }
+
+    public void setDiscord(String kingdomName,  String roleID, String channelID) throws kingdomNameNotExists, sqlError {
+
+        try {
+
+            if (checkKingdomExistence(kingdomName)) {
+
+                PreparedStatement setDiscord = sql.prepareStatement(
+                        "UPDATE KingdomData SET KingdomData.DiscordChannelID = ?, KingdomData.DiscordRoleID = ? WHERE KingdomData.Kingdom = ?"
+                );
+                setDiscord.setString(1, channelID);
+                setDiscord.setString(2, roleID);
+                setDiscord.setString(3, kingdomName);
+                setDiscord.executeUpdate();
+
+            } else {
+                throw new kingdomNameNotExists();
+            }
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new sqlError();
+        }
+
+    }
+
     // Convenience
-    private boolean checkKingdomExistence(String kingdomName) throws SQLException {
+    public boolean checkKingdomExistence(String kingdomName) throws SQLException {
 
         PreparedStatement checkExistence = sql.prepareStatement(
                 "SELECT KingdomData.Kingdom FROM KingdomData WHERE KingdomData.Kingdom = ?"
@@ -329,7 +375,7 @@ public class KingdomsAPI {
 
     }
 
-    private boolean checkPlayerExistence(UUID playerID) throws SQLException {
+    public boolean checkPlayerExistence(UUID playerID) throws SQLException {
 
         PreparedStatement checkExistence = sql.prepareStatement(
                 "SELECT PlayerData.PlayerUUID FROM PlayerData WHERE PlayerData.PlayerUUID = ?"
@@ -339,7 +385,7 @@ public class KingdomsAPI {
 
     }
 
-    private String getPlayerName(UUID playerID) throws SQLException {
+    public String getPlayerName(UUID playerID) throws SQLException {
 
         PreparedStatement getName = sql.prepareStatement(
                 "SELECT PlayerData.PlayerName FROM PlayerData WHERE PlayerData.PlayerUUID = ?"
@@ -355,7 +401,7 @@ public class KingdomsAPI {
 
     }
 
-    private String getPlayerName(String playerID) throws SQLException {
+    public String getPlayerName(String playerID) throws SQLException {
 
         PreparedStatement getName = sql.prepareStatement(
                 "SELECT PlayerData.PlayerName FROM PlayerData WHERE PlayerData.PlayerUUID = ?"
@@ -371,7 +417,7 @@ public class KingdomsAPI {
 
     }
 
-    private boolean playerHasKingdom(UUID playerID) throws SQLException {
+    public boolean playerHasKingdom(UUID playerID) throws SQLException {
 
         String playerKingdom = getPlayerKingdom(playerID);
         return playerKingdom != null;
@@ -396,7 +442,7 @@ public class KingdomsAPI {
 
     }
 
-    private boolean checkPlayerPos(UUID playerID) throws SQLException {
+    public boolean checkPlayerPos(UUID playerID) throws SQLException {
 
         String playerPos = null;
 
@@ -409,10 +455,66 @@ public class KingdomsAPI {
         if (player.next()){
             playerPos = player.getString("Pos");
         }
-        if (playerPos == null) { return false; }
+        if (playerPos == null) return false;
 
         return playerPos.equals("Owner") || playerPos.equals("Mayor");
 
+    }
+
+    public String getKingdomRoleID(String kingdomName) throws sqlError, kingdomNameNotExists {
+
+        try{
+
+            if (checkKingdomExistence(kingdomName)) {
+
+                PreparedStatement KingdomRoleIDQuery = sql.prepareStatement
+                                ("SELECT KingdomData.DiscordRoleID " +
+                                        "FROM KingdomData " +
+                                        "WHERE KingdomData.Kingdom = ?");
+                KingdomRoleIDQuery.setString(1, kingdomName);
+                ResultSet KingdomRoleIDResult = KingdomRoleIDQuery.executeQuery();
+
+
+                if (KingdomRoleIDResult.next()){
+                    return KingdomRoleIDResult.getString("DiscordRoleID");
+                }
+
+            } else {
+                throw new kingdomNameNotExists();
+            }
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new sqlError();
+        }
+        return null;
+    }
+
+    public boolean linkedDiscord(String kingdomName) throws kingdomNameNotExists, sqlError {
+
+        try {
+
+            if (checkKingdomExistence(kingdomName)){
+
+                PreparedStatement checkDiscord = sql.prepareStatement(
+                        "SELECT KingdomData.DiscordChannelID FROM KingdomData WHERE KingdomData.Kingdom = ?"
+                );
+                checkDiscord.setString(1, kingdomName);
+                ResultSet checkDiscordResult = checkDiscord.executeQuery();
+                if (checkDiscordResult.next()){
+                    return checkDiscordResult.getString("DiscordChannelID") != null;
+                }
+
+            } else {
+                throw new kingdomNameNotExists();
+            }
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new sqlError();
+        }
+
+        return false;
     }
 
 }
