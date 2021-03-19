@@ -3,8 +3,7 @@ package net.kingdomscrusade.Kingdoms;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
-import net.kingdomscrusade.Kingdoms.commands.kc;
-import net.kingdomscrusade.Kingdoms.commands.kingdoms;
+import net.kingdomscrusade.Kingdoms.command.CommandManager;
 import net.kingdomscrusade.Kingdoms.modules.discord.DiscordListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -43,8 +42,7 @@ public class KingdomsMain extends JavaPlugin {
 
         //Plugin Initiation
         instance = this;
-        getCommand("kingdoms").setExecutor(new kingdoms());
-        getCommand("kc").setExecutor(new kc());
+        getCommand("kc").setExecutor(new CommandManager());
         //TODO Tab completer
 
         getServer().getPluginManager().registerEvents(new KingdomsEvent(), this);

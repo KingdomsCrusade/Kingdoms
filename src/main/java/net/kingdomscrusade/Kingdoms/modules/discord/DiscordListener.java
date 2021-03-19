@@ -7,9 +7,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.kingdomscrusade.Kingdoms.KingdomsCore;
 import net.kingdomscrusade.Kingdoms.KingdomsMain;
-import net.kingdomscrusade.Kingdoms.exceptions.kingdomNameNotExists;
-import net.kingdomscrusade.Kingdoms.exceptions.sqlError;
-import net.kingdomscrusade.Kingdoms.modules.yamlManager;
+import net.kingdomscrusade.Kingdoms.error.KingdomNameNotExists;
+import net.kingdomscrusade.Kingdoms.error.SqlError;
+import net.kingdomscrusade.Kingdoms.yaml.YamlManager;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,7 +22,7 @@ public class DiscordListener extends ListenerAdapter {
     Connection sql = KingdomsMain.getDatabaseConnection();
     DiscordActions actions = new DiscordActions();
     KingdomsCore core = new KingdomsCore();
-    yamlManager yaml = new yamlManager();
+    YamlManager yaml = new YamlManager();
 
 
     @Override
@@ -84,12 +84,12 @@ public class DiscordListener extends ListenerAdapter {
                                 "Channels created and linked!"
                         ).queue();
                         return;
-                    } catch (sqlError e){
+                    } catch (SqlError e){
                         event.getChannel().sendMessage(
                                 "Database error, huh? Call Raza or Lil to check"
                         ).queue();
                         return;
-                    } catch (kingdomNameNotExists e){
+                    } catch (KingdomNameNotExists e){
                         event.getChannel().sendMessage(
                                 "Ya know what? This kingdom doesnt even exist LMFAO"
                         ).queue();
@@ -138,12 +138,12 @@ public class DiscordListener extends ListenerAdapter {
                                 "Channels deleted and unlinked."
                         ).queue();
                         return;
-                    } catch (sqlError e){
+                    } catch (SqlError e){
                         event.getChannel().sendMessage(
                                 "Database error, huh? Call Raza or Lil to check"
                         ).queue();
                         return;
-                    } catch (kingdomNameNotExists e){
+                    } catch (KingdomNameNotExists e){
                         event.getChannel().sendMessage(
                                 "Ya know what? This kingdom doesnt even exist LMFAO"
                         ).queue();
@@ -189,12 +189,12 @@ public class DiscordListener extends ListenerAdapter {
                                 "Database error, huh? Call Raza or Lil to check"
                         ).queue();
                         return;
-                    } catch (sqlError e){
+                    } catch (SqlError e){
                         event.getChannel().sendMessage(
                                 "Database error, huh? Call Raza or Lil to check"
                         ).queue();
                         return;
-                    } catch (kingdomNameNotExists e){
+                    } catch (KingdomNameNotExists e){
                         event.getChannel().sendMessage(
                                 "Looks like the script went wrong... Call Lil to check"
                         ).queue();
@@ -245,12 +245,12 @@ public class DiscordListener extends ListenerAdapter {
                                 "Database error, huh? Call Raza or Lil to check"
                         ).queue();
                         return;
-                    } catch (sqlError e){
+                    } catch (SqlError e){
                         event.getChannel().sendMessage(
                                 "Database error, huh? Call Raza or Lil to check"
                         ).queue();
                         return;
-                    } catch (kingdomNameNotExists e){
+                    } catch (KingdomNameNotExists e){
                         event.getChannel().sendMessage(
                                 "Looks like the script went wrong... Call Lil to check"
                         ).queue();

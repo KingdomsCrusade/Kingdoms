@@ -5,10 +5,9 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.kingdomscrusade.Kingdoms.KingdomsCore;
 import net.kingdomscrusade.Kingdoms.KingdomsMain;
-import net.kingdomscrusade.Kingdoms.exceptions.channelNotFound;
-import net.kingdomscrusade.Kingdoms.exceptions.kingdomNoDiscordChannel;
-import net.kingdomscrusade.Kingdoms.exceptions.senderNoKingdom;
-import net.kingdomscrusade.Kingdoms.exceptions.sqlError;
+import net.kingdomscrusade.Kingdoms.error.ChannelNotFound;
+import net.kingdomscrusade.Kingdoms.error.SenderNoKingdom;
+import net.kingdomscrusade.Kingdoms.error.SqlError;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -27,7 +26,7 @@ public class DiscordActions {
     JDA jda = KingdomsMain.getDiscordConnection();
     KingdomsCore core = new KingdomsCore();
 
-    public void sendChatFromGame(Player sender, String message) throws sqlError, senderNoKingdom, kingdomNoDiscordChannel, channelNotFound {
+    public void sendChatFromGame(Player sender, String message) throws SqlError, SenderNoKingdom, ChannelNotFound {
 
         try {
 
@@ -73,7 +72,7 @@ public class DiscordActions {
                         if (channel != null){
                             channel.sendMessage(core.getPlayerName(senderID) + " >> " + message).queue();
                         } else {
-                            throw new channelNotFound();
+                            throw new ChannelNotFound();
                         }
                     }
 
@@ -81,12 +80,12 @@ public class DiscordActions {
                 }
 
             } else {
-                throw new senderNoKingdom();
+                throw new SenderNoKingdom();
             }
 
         } catch (SQLException e){
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
     }

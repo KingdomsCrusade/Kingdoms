@@ -6,9 +6,6 @@ description: ${project.description}
 website: ${project.url}
 api-version: 1.16
 commands:
-  kingdoms:
-    description: Give a list of active Kingdoms.
-    usage: /<command> ? for more info.
   kc:
-    description: Send message in your kingdoms chat room!
-    usage: /<command> [message]
+    description: Command to access KCDIGP plugin!
+    usage: /<command> ? for more info.

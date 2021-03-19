@@ -1,6 +1,6 @@
 package net.kingdomscrusade.Kingdoms;
 
-import net.kingdomscrusade.Kingdoms.exceptions.*;
+import net.kingdomscrusade.Kingdoms.error.*;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -8,9 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 public class KingdomsCore {
@@ -19,32 +17,13 @@ public class KingdomsCore {
 //    Plugin plugin = KingdomsMain.getInstance();
     Connection sql = KingdomsMain.getDatabaseConnection();
 
-    String[] ColorList = {
-            "DARK_RED",
-            "RED",
-            "GOLD",
-            "YELLOW",
-            "DARK_GREEN",
-            "GREEN",
-            "AQUA",
-            "DARK_AQUA",
-            "DARK_BLUE",
-            "BLUE",
-            "LIGHT_PURPLE",
-            "DARK_PURPLE",
-            "WHITE",
-            "GRAY",
-            "DARK_GRAY",
-            "BLACK"
-    };
-
     //Kingdoms
-    public void createKingdom(String kingdomName, String playerName) throws sqlError, kingdomNameIsUsed, playerNameNotExists, playerHasKingdom {
+    public void createKingdom(String kingdomName, String playerName) throws SqlError, KingdomNameIsUsed, PlayerNameNotExists, PlayerHasKingdom {
 
         try {
 
             UUID playerUUID = Bukkit.getPlayerUniqueId(playerName);
-            if (playerUUID == null) throw new playerNameNotExists();
+            if (playerUUID == null) throw new PlayerNameNotExists();
             if (checkPlayerExistence(playerUUID)) {
 
                 if (!(checkKingdomExistence(kingdomName))) {
@@ -68,24 +47,24 @@ public class KingdomsCore {
                         updatePlayerKingdom.executeUpdate();
 
                     } else {
-                        throw new playerHasKingdom();
+                        throw new PlayerHasKingdom();
                     }
 
                 } else {
-                    throw new kingdomNameIsUsed();
+                    throw new KingdomNameIsUsed();
                 }
 
             } else {
-                throw new playerNameNotExists();
+                throw new PlayerNameNotExists();
             }
         } catch (SQLException s) {
             s.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
     }
 
-    public void removeKingdom(String kingdomName) throws kingdomNameNotExists, sqlError {
+    public void removeKingdom(String kingdomName) throws KingdomNameNotExists, SqlError {
 
         try {
 
@@ -106,18 +85,18 @@ public class KingdomsCore {
                 updateRole.executeUpdate();
 
             } else {
-                throw new kingdomNameNotExists();
+                throw new KingdomNameNotExists();
             }
 
         } catch (SQLException s) {
             s.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
     }
 
 
-    public List<String> getKingdomList() throws sqlError, noKingdomExists {
+    public List<String> getKingdomList() throws SqlError, NoKingdomExists {
 
         try {
 
@@ -135,7 +114,7 @@ public class KingdomsCore {
 
             } else {
 
-                throw new noKingdomExists();
+                throw new NoKingdomExists();
 
             }
 
@@ -143,13 +122,13 @@ public class KingdomsCore {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
     }
 
-    public List<String> getKingdomDetails(String kingdomName) throws kingdomNameNotExists, sqlError {
+    public Map<String, String> getKingdomDetails(String kingdomName) throws KingdomNameNotExists, SqlError {
 
-        String Kingdom = null, OwnerName = null, MayorName = null;
+        String Kingdom, OwnerName, MayorName;
 
         try {
 
@@ -160,13 +139,14 @@ public class KingdomsCore {
                 );
                 retrieveKingdomDetail.setString(1, kingdomName);
                 ResultSet KingdomDetail = retrieveKingdomDetail.executeQuery();
-                List<String> detailReturn = new ArrayList<>();
+                Map<String, String> detailReturn = new HashMap<>();
 
                 // Assigning all variables
 
                 if (KingdomDetail.next()) {
 
                     Kingdom = KingdomDetail.getString("Kingdom");
+                    detailReturn.put("Kingdom", Kingdom);
 
                     String OwnerString = KingdomDetail.getString("Owner");
                     if (OwnerString != null) {
@@ -174,6 +154,7 @@ public class KingdomsCore {
                     } else {
                         OwnerName = "null";
                     }
+                    detailReturn.put("Owner", OwnerName);
 
                     String MayorString = KingdomDetail.getString("Mayor");
                     if (MayorString != null) {
@@ -181,23 +162,19 @@ public class KingdomsCore {
                     } else {
                         MayorName = "null";
                     }
+                    detailReturn.put("Mayor", MayorName);
 
                 }
-
-                // Adding them to list
-                detailReturn.add(Kingdom);
-                detailReturn.add(OwnerName);
-                detailReturn.add(MayorName);
 
                 return detailReturn;
 
             } else {
-                throw new kingdomNameNotExists();
+                throw new KingdomNameNotExists();
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
     }
@@ -205,14 +182,14 @@ public class KingdomsCore {
     // Properties
 
     //Members
-    public void addMember(Player sender, String playerName) throws sqlError, playerNoPermission, playerNameNotExists, playerHasKingdom {
+    public void addMember(Player sender, String playerName) throws SqlError, PlayerNoPermission, PlayerNameNotExists, PlayerHasKingdom {
 
         try {
 
             if (checkPlayerPos(sender.getUniqueId())) {
 
                 UUID playerUUID = Bukkit.getPlayerUniqueId(playerName);
-                if (playerUUID == null) throw new playerNameNotExists();
+                if (playerUUID == null) throw new PlayerNameNotExists();
                 if (checkPlayerExistence(playerUUID)) {
 
                     if (!(playerHasKingdom(playerUUID))) {
@@ -225,32 +202,32 @@ public class KingdomsCore {
                         addPlayer.executeUpdate();
 
                     } else {
-                        throw new playerHasKingdom();
+                        throw new PlayerHasKingdom();
                     }
 
                 } else {
-                    throw new playerNameNotExists();
+                    throw new PlayerNameNotExists();
                 }
 
             } else {
-                throw new playerNoPermission();
+                throw new PlayerNoPermission();
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
     }
 
-    public void removeMember(Player sender, String playerName) throws playerNameNotExists, playerNotMember, playerNoPermission, sqlError {
+    public void removeMember(Player sender, String playerName) throws PlayerNameNotExists, PlayerNotMember, PlayerNoPermission, SqlError {
 
         try {
 
             if (checkPlayerPos(sender.getUniqueId())) {
 
                 UUID playerUUID = Bukkit.getPlayerUniqueId(playerName);
-                if (playerUUID == null) throw new playerNameNotExists();
+                if (playerUUID == null) throw new PlayerNameNotExists();
                 if (checkPlayerExistence(playerUUID)) {
 
                     if (getPlayerKingdom(sender.getUniqueId())   .equals   (getPlayerKingdom(playerUUID))){
@@ -262,25 +239,25 @@ public class KingdomsCore {
                         addPlayer.executeUpdate();
 
                     } else {
-                        throw new playerNotMember();
+                        throw new PlayerNotMember();
                     }
 
                 } else {
-                    throw new playerNameNotExists();
+                    throw new PlayerNameNotExists();
                 }
 
             } else {
-                throw new playerNoPermission();
+                throw new PlayerNoPermission();
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
     }
 
-    public List<String> listMember(String kingdomName) throws noMemberExists, sqlError, kingdomNameNotExists {
+    public List<String> listMember(String kingdomName) throws NoMemberExists, SqlError, KingdomNameNotExists {
 
         try {
 
@@ -301,24 +278,24 @@ public class KingdomsCore {
 
                 } else {
 
-                    throw new noMemberExists();
+                    throw new NoMemberExists();
 
                 }
 
                 return resultList;
 
             } else {
-                throw new kingdomNameNotExists();
+                throw new KingdomNameNotExists();
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
     }
 
-    public String getDiscordKingdom(String channelID) throws sqlError {
+    public String getDiscordKingdom(String channelID) throws SqlError {
 
         try {
 
@@ -334,12 +311,12 @@ public class KingdomsCore {
 
         } catch (SQLException e){
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
     }
 
-    public void setDiscord(String kingdomName,  String roleID, String channelID) throws kingdomNameNotExists, sqlError {
+    public void setDiscord(String kingdomName,  String roleID, String channelID) throws KingdomNameNotExists, SqlError {
 
         try {
 
@@ -354,12 +331,12 @@ public class KingdomsCore {
                 setDiscord.executeUpdate();
 
             } else {
-                throw new kingdomNameNotExists();
+                throw new KingdomNameNotExists();
             }
 
         } catch (SQLException e){
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
     }
@@ -461,7 +438,7 @@ public class KingdomsCore {
 
     }
 
-    public String getKingdomRoleID(String kingdomName) throws sqlError, kingdomNameNotExists {
+    public String getKingdomRoleID(String kingdomName) throws SqlError, KingdomNameNotExists {
 
         try{
 
@@ -480,17 +457,17 @@ public class KingdomsCore {
                 }
 
             } else {
-                throw new kingdomNameNotExists();
+                throw new KingdomNameNotExists();
             }
 
         } catch (SQLException e){
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
         return null;
     }
 
-    public boolean linkedDiscord(String kingdomName) throws kingdomNameNotExists, sqlError {
+    public boolean linkedDiscord(String kingdomName) throws KingdomNameNotExists, SqlError {
 
         try {
 
@@ -506,12 +483,12 @@ public class KingdomsCore {
                 }
 
             } else {
-                throw new kingdomNameNotExists();
+                throw new KingdomNameNotExists();
             }
 
         } catch (SQLException e){
             e.printStackTrace();
-            throw new sqlError();
+            throw new SqlError();
         }
 
         return false;
