@@ -1,2 +1,2 @@
-rootProject.name = "KCDIGP"
-include("kingdoms")
+rootProject.name = "Kingdoms"
+include("plugin")
