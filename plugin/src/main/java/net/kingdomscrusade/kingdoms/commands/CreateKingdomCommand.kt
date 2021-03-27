@@ -40,7 +40,7 @@ class CreateKingdomCommand {
                     collection.insert(kingdomPOJO(sender, name, player))
                     Bukkit.broadcast(
                         Component.text(
-                            Main.getMessage().load("CreateKingdom", name, playerName, senderName)
+                            Main.getMessage().load("CreateKingdom", name, playerName, senderName)!!
                         ),
                         ""
                     )

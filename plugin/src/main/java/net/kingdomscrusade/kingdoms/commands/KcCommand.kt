@@ -9,6 +9,7 @@ class KcCommand {
         CommandAPICommand("kc")
             .withAliases("kingdoms")
             .withSubcommand(CreateKingdomCommand().createKingdom)
+            .withSubcommand(DeleteKingdomCommand().deleteKingdom)
             .register()
 
     }
