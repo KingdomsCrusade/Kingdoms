@@ -40,8 +40,10 @@ repositories {
     maven { url = uri("https://repo.codemc.org/repository/maven-public/") }
     // SimpleCommands
     maven { url = uri("https://jitpack.io") }
-//    // KotlinBukkitAPI
-//    maven { url = uri("http://nexus.devsrsouza.com.br/repository/maven-public/") }
+
+    /* Test Modules */
+    // MockBukkit
+    maven { url = uri("https://hub.spigotmc.org/nexus/content/repositories/public/") }
 
 }
 
@@ -76,14 +78,24 @@ dependencies {
     // SimpleCommands
     implementation("com.github.Paul2708.simple-commands:simple-commands:0.4.1")
 
-//    // KotlinBukkitAPI
-//    compileOnly("br.com.devsrsouza.kotlinbukkitapi:core:$kotlinbukkitapi_version")
-
     // Commons-text
     implementation("org.apache.commons:commons-text:1.1"){
         because("Used for better String placeholders")
     }
 
+    /* Test Modules */
+    // Junit 5
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.1")
+
+    // Mockito
+    testImplementation("org.mockito:mockito-core:3.+")
+
+    // MockBukkit
+    testImplementation("com.github.seeseemelk:MockBukkit-v1.16:0.25.0")
+
+    // Fongo
+    testImplementation("com.github.fakemongo:fongo:2.1.0")
 }
 
 bukkit{
@@ -107,4 +119,8 @@ tasks.withType<ShadowJar> {
     baseName = "app"
     classifier = ""
     version = ""
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
