@@ -1,0 +1,131 @@
+plugins {
+
+    /* Languages */
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.30'
+
+    /* Helper plugins */
+    // Shading Plugins
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    // plugin-yml
+    id 'net.minecrell.plugin-yml.bukkit' version '0.3.0'
+    // Lombok
+    id 'io.freefair.lombok' version '5.3.0'
+
+}
+
+group = 'com.kingdomscrusade.Kingdoms'
+version = '0.2.0-alpha'
+
+/* Module Versions */
+String paper_version = '1.16.5-R0.1-SNAPSHOT'
+String jda_version = '4.2.0_168'
+String commandapi_version = '5.9'
+
+repositories {
+
+    mavenLocal()
+    jcenter()
+
+    /* Paper */
+    //noinspection GroovyAssignabilityCheck
+    maven { url 'https://papermc.io/repo/repository/maven-public/' }
+
+    /* Modules */
+    // CommandAPI
+    //noinspection GroovyAssignabilityCheck
+    maven { url 'https://raw.githubusercontent.com/JorelAli/CommandAPI/mvn-repo/' }
+    //noinspection GroovyAssignabilityCheck
+    maven { url 'https://repo.codemc.org/repository/maven-public/' }
+
+    /* Test Modules */
+    // MockBukkit
+    //noinspection GroovyAssignabilityCheck
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
+
+}
+
+dependencies {
+
+    /* Language */
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.30'
+
+    /* Paper */
+    compileOnly("com.destroystokyo.paper:paper-api:${paper_version}") {
+        because 'Project extends from Paper JavaPlugin class'
+    }
+
+    /* Modules */
+    // JDA
+    implementation("net.dv8tion:JDA:${jda_version}") {
+        because 'Used for Discord bot implementation'
+    }
+
+    // MongoDB
+    implementation('org.mongodb:mongodb-driver-sync:4.2.2') {
+        because 'MongoDB Driver, Database usage'
+    }
+    implementation('org.mongojack:mongojack:4.0.2') {
+        because 'Mapping Mongos to POJOs'
+    }
+
+    /* Helpers */
+    // CommandAPI
+    implementation("dev.jorel:commandapi-shade:${commandapi_version}"){
+        because 'Avoid command boilerplates'
+    }
+
+    // Commons-text
+    implementation('org.apache.commons:commons-text:1.1') {
+        because 'Used for better String placeholders' 
+    }
+
+    /* Test Modules */
+    // Junit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
+
+    // Mockito
+    testImplementation 'org.mockito:mockito-core:3.+'
+
+    // MockBukkit
+    testImplementation 'com.github.seeseemelk:MockBukkit-v1.16:0.25.0'
+
+    // Fongo
+    testImplementation 'com.github.fakemongo:fongo:2.1.0'
+}
+
+test{
+    useJUnitPlatform()
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+shadowJar {
+    dependencies {
+        //noinspection GroovyAssignabilityCheck
+        include dependency("dev.jorel:commandapi-shade:${commandapi_version}")
+    }
+}
+
+bukkit{
+
+    main = 'net.kingdomscrusade.Kingdoms.KingdomsMain'
+    apiVersion = '1.16'
+
+    author = 'LittleHillMYR'
+    website = 'kingdomscrusade.net'
+    depend = ['KotlinBukkitAPI']
+
+    description = 'Kingdom management plugin for Kingdoms Crusade'
+
+}
