@@ -1,6 +1,6 @@
-package net.kingdomscrusade.kingdoms.objects.enums;
+package net.kingdomscrusade.kingdoms.objects.enums
 
-public enum RoleFlags {
+enum class RoleFlags {
     ADMINISTRATOR,
     MANAGE_ROLES,
     VIEW_LOG,
