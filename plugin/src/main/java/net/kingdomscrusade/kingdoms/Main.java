@@ -2,9 +2,9 @@ package net.kingdomscrusade.kingdoms;
 
 import lombok.Getter;
 import net.kingdomscrusade.kingdoms.commands.KcCommand;
-import net.kingdomscrusade.kingdoms.modules.MessageLoader;
 import net.kingdomscrusade.kingdoms.mongo.Mongo;
 import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms;
+import net.kingdomscrusade.kingdoms.utils.MessageLoader;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;

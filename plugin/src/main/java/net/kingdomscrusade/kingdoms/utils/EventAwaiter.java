@@ -1,4 +1,4 @@
-package net.kingdomscrusade.kingdoms.modules;
+package net.kingdomscrusade.kingdoms.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
