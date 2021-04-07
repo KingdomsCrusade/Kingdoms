@@ -3,18 +3,22 @@ package net.kingdomscrusade.kingdoms;
 import lombok.Getter;
 import net.kingdomscrusade.kingdoms.commands.KcCommand;
 import net.kingdomscrusade.kingdoms.mongo.Mongo;
-import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms;
+import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms.Kingdoms;
+import net.kingdomscrusade.kingdoms.mongo.pojo.Players.Players;
 import net.kingdomscrusade.kingdoms.utils.MessageLoader;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mongojack.JacksonMongoCollection;
 
+import java.util.Map;
+
 
 public class Main extends JavaPlugin {
 
     private static @Getter Plugin instance;
     private static @Getter JacksonMongoCollection<Kingdoms> kingdomsCollection;
+    private static @Getter JacksonMongoCollection<Players> playersCollection;
     private static @Getter MessageLoader message;
 
     @Override
@@ -25,7 +29,11 @@ public class Main extends JavaPlugin {
         message = new MessageLoader(this);
 
         // Database Initiation
-        kingdomsCollection = Mongo.init();
+        Map<String, JacksonMongoCollection<?>> collections = Mongo.init();
+        //noinspection unchecked
+        kingdomsCollection = (JacksonMongoCollection<Kingdoms>) collections.get("kingdoms");
+        //noinspection unchecked
+        playersCollection = (JacksonMongoCollection<Players>) collections.get("players");
 
         // Plugin Initiation
         instance = this;

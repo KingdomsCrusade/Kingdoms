@@ -1,10 +1,11 @@
 package net.kingdomscrusade.kingdoms.actions
 
 import net.kingdomscrusade.kingdoms.Main
-import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms
-import net.kingdomscrusade.kingdoms.mongo.pojo.KingdomsCreation
-import net.kingdomscrusade.kingdoms.mongo.pojo.KingdomsMembers
-import net.kingdomscrusade.kingdoms.mongo.pojo.KingdomsRoles
+import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms.Kingdoms
+import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms.KingdomsCreation
+import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms.KingdomsRoles
+import net.kingdomscrusade.kingdoms.mongo.pojo.Players.Players
+import net.kingdomscrusade.kingdoms.mongo.pojo.Players.PlayersKingdom
 import net.kingdomscrusade.kingdoms.objects.enums.RoleFlags
 import org.bson.types.ObjectId
 import org.bukkit.entity.Player
@@ -14,34 +15,59 @@ class CreateKingdom {
 
     companion object{
         fun accept(sender: Player, name: String, player: Player):Boolean{
-            val collection = Main.getKingdomsCollection()
+            val kingdomsCollection = Main.getKingdomsCollection()
+            val playersCollection = Main.getPlayersCollection()
+            val kingdomPOJO = kingdomPOJO(sender, name)
 
-            collection.insert(kingdomPOJO(sender, name, player))
+            kingdomsCollection.insert(kingdomPOJO)
+            playersCollection.insert(
+                Players(
+                    player.uniqueId,
+                    player.name,
+                    PlayersKingdom(
+                        name,
+                        kingdomPOJO
+                            .getRole("Owner")
+                            .getRoleId(),
+                        Date()
+                    )
+                )
+            )
             return true
         }
 
-        private fun kingdomPOJO(sender: Player, name: String, player: Player): Kingdoms {
+        private fun kingdomPOJO(sender: Player, name: String): Kingdoms {
 
             val now = Date()
 
             /* Creating POJO */
             // Roles
-            val ownerRole = KingdomsRoles(ObjectId(), "Owner", "Console", false)
+            val ownerRole = KingdomsRoles(
+                ObjectId(),
+                "Owner",
+                "Console",
+                false
+            )
             ownerRole.setFlags(arrayListOf(
                 RoleFlags.ADMINISTRATOR
             ))
 
-            val memberRole = KingdomsRoles(ObjectId(), "Member", "Console", false)
+            val memberRole = KingdomsRoles(
+                ObjectId(),
+                "Member",
+                "Console",
+                false
+            )
             memberRole.setFlags(arrayListOf(
                 RoleFlags.MENTION,
                 RoleFlags.USE_CHATROOM
             ))
 
-            // Member
-            val member = KingdomsMembers(player.uniqueId, player.name, now)
-            member.setRole(arrayListOf(
-                ownerRole.getRoleId()
-            ))
+//            // Member
+//            val member = KingdomsMembers(player.uniqueId, player.name, now)
+//            member.setRole(arrayListOf(
+//                ownerRole.getRoleId()
+//            ))
 
             // Return
             return Kingdoms(
@@ -50,8 +76,7 @@ class CreateKingdom {
                 arrayListOf(
                     ownerRole,
                     memberRole
-                ),
-                arrayListOf(member)
+                )
             )
         }
     }

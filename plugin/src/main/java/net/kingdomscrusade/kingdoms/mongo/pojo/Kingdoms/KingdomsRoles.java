@@ -1,4 +1,4 @@
-package net.kingdomscrusade.kingdoms.mongo.pojo;
+package net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

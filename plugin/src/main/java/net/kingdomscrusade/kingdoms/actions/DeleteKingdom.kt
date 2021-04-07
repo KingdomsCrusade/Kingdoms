@@ -7,10 +7,11 @@ class DeleteKingdom {
     companion object{
         fun accept(kingdomName:String):Boolean{
 
-            val collection = Main.getKingdomsCollection()
+            val kingdomsCollection = Main.getKingdomsCollection()
+            val playersCollection = Main.getPlayersCollection()
 
             if (
-                collection.find()
+                kingdomsCollection.find()
                     .toList()
                     .stream()
                     .anyMatch{
@@ -19,7 +20,9 @@ class DeleteKingdom {
             )
                 throw IllegalArgumentException("Kingdom not found!")
 
-            return collection.deleteOne(
+            playersCollection.deleteMany(Filters.eq("kingdom.in", kingdomName))
+
+            return kingdomsCollection.deleteOne(
                 Filters.eq(
                     "name", kingdomName
                 )
