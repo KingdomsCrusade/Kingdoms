@@ -18,7 +18,7 @@ class CreateKingdomCommand {
             StringArgument("name").setListed(false),
             PlayerArgument("player")
         ))
-        .withPermission("Kingdoms.ManageKingdoms")
+        .withPermission("kingdoms.ManageKingdoms")
         .executesPlayer(
             PlayerCommandExecutor{sender, args ->
                 run {

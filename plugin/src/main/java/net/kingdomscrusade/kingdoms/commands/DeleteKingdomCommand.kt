@@ -13,7 +13,7 @@ class DeleteKingdomCommand {
 
     val deleteKingdom:CommandAPICommand = CommandAPICommand("deletekingdom")
         .withAliases("kingdomdelete")
-        .withPermission("Kingdoms.ManageKingdoms")
+        .withPermission("kingdoms.ManageKingdoms")
         .withArguments(listOf(
             StringArgument("kingdom")
                 .overrideSuggestions(

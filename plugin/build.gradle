@@ -128,4 +128,16 @@ bukkit{
 
     description = 'Kingdom management plugin for Kingdoms Crusade'
 
+    //noinspection GroovyAssignabilityCheck
+    permissions {
+        'kingdoms.Operator' {
+            description = 'All in one permission for dominating the entire kingdom chain!'
+            children = ['kingdoms.ManageKingdoms']
+            setDefault('OP')
+        }
+        'kingdoms.ManageKingdoms' {
+            description = 'Grants permission to manage kingdoms.'
+        }
+    }
+
 }
