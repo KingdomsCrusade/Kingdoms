@@ -14,7 +14,7 @@ plugins {
 
 }
 
-group = 'com.kingdomscrusade.Kingdoms'
+group = 'com.kingdomscrusade.kingdoms'
 version = '0.2.0-alpha'
 
 /* Module Versions */
@@ -24,7 +24,7 @@ String commandapi_version = '5.9'
 
 repositories {
 
-    mavenLocal()
+    mavenCentral()
     jcenter()
 
     /* Paper */
