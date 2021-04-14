@@ -14,7 +14,7 @@ import org.mongojack.JacksonMongoCollection;
 import java.util.Map;
 
 
-public class Main extends JavaPlugin {
+public class KingdomsMain extends JavaPlugin {
 
     private static @Getter Plugin instance;
     private static @Getter JacksonMongoCollection<Kingdoms> kingdomsCollection;

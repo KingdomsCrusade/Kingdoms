@@ -3,7 +3,7 @@ package net.kingdomscrusade.kingdoms.mongo;
 import com.mongodb.client.MongoClients;
 import lombok.NonNull;
 import lombok.val;
-import net.kingdomscrusade.kingdoms.Main;
+import net.kingdomscrusade.kingdoms.KingdomsMain;
 import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms.Kingdoms;
 import net.kingdomscrusade.kingdoms.mongo.pojo.Players.Players;
 import org.bson.UuidRepresentation;
@@ -18,7 +18,7 @@ public class Mongo {
     public static Map<String, JacksonMongoCollection<?>> init(){
 
         /* Variables */
-        val main = Main.getInstance();
+        val main = KingdomsMain.getInstance();
         val config = main.getConfig();
 
         @NonNull val connectionString = Objects.requireNonNull(config.getString("Database.connection"));

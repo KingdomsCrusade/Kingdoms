@@ -3,7 +3,7 @@ package net.kingdomscrusade.kingdoms.commands
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
-import net.kingdomscrusade.kingdoms.Main
+import net.kingdomscrusade.kingdoms.KingdomsMain
 import net.kingdomscrusade.kingdoms.actions.DeleteKingdom
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -17,7 +17,7 @@ class DeleteKingdomCommand {
         .withArguments(listOf(
             StringArgument("kingdom")
                 .overrideSuggestions(
-                    Main.getKingdomsCollection().find()
+                    KingdomsMain.getKingdomsCollection().find()
                         .toList()
                         .stream()
                         .map { k -> k.getName() }
@@ -33,7 +33,7 @@ class DeleteKingdomCommand {
                     if (DeleteKingdom.accept(kingdomName))
                         Bukkit.broadcast(
                             Component.text(
-                                Main.getMessage().load(
+                                KingdomsMain.getMessage().load(
                                     "DeleteKingdom",
                                     kingdomName,
                                     sender.name

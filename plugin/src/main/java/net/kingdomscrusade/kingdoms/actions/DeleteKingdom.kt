@@ -1,14 +1,14 @@
 package net.kingdomscrusade.kingdoms.actions
 
 import com.mongodb.client.model.Filters
-import net.kingdomscrusade.kingdoms.Main
+import net.kingdomscrusade.kingdoms.KingdomsMain
 
 class DeleteKingdom {
     companion object{
         fun accept(kingdomName:String):Boolean{
 
-            val kingdomsCollection = Main.getKingdomsCollection()
-            val playersCollection = Main.getPlayersCollection()
+            val kingdomsCollection = KingdomsMain.getKingdomsCollection()
+            val playersCollection = KingdomsMain.getPlayersCollection()
 
             if (
                 kingdomsCollection.find()

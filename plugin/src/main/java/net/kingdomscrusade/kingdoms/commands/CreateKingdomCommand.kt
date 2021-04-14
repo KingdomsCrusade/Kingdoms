@@ -4,7 +4,7 @@ import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
-import net.kingdomscrusade.kingdoms.Main
+import net.kingdomscrusade.kingdoms.KingdomsMain
 import net.kingdomscrusade.kingdoms.actions.CreateKingdom
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -29,7 +29,7 @@ class CreateKingdomCommand {
                     if (CreateKingdom.accept(sender, name, player))
                         Bukkit.broadcast(
                             Component.text(
-                                Main.getMessage().load(
+                                KingdomsMain.getMessage().load(
                                     "CreateKingdom",
                                     name,
                                     player.name,

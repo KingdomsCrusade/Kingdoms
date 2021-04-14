@@ -1,6 +1,6 @@
 package net.kingdomscrusade.kingdoms.actions
 
-import net.kingdomscrusade.kingdoms.Main
+import net.kingdomscrusade.kingdoms.KingdomsMain
 import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms.Kingdoms
 import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms.KingdomsCreation
 import net.kingdomscrusade.kingdoms.mongo.pojo.Kingdoms.KingdomsRoles
@@ -15,8 +15,8 @@ class CreateKingdom {
 
     companion object{
         fun accept(sender: Player, name: String, player: Player):Boolean{
-            val kingdomsCollection = Main.getKingdomsCollection()
-            val playersCollection = Main.getPlayersCollection()
+            val kingdomsCollection = KingdomsMain.getKingdomsCollection()
+            val playersCollection = KingdomsMain.getPlayersCollection()
             val kingdomPOJO = kingdomPOJO(sender, name)
 
             kingdomsCollection.insert(kingdomPOJO)
