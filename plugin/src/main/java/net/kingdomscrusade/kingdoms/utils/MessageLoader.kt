@@ -5,7 +5,6 @@ import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.Plugin
 import java.io.File
 import java.io.IOException
-import java.text.MessageFormat
 
 class MessageLoader (main: Plugin){
 
@@ -28,41 +27,9 @@ class MessageLoader (main: Plugin){
         }
     }
 
-    fun load(path: String, vararg input: String): String? {
+    fun load(path: String, vararg input: String): String {
         val strings = input.asList()
-        when (strings.size){
-            1 -> return MessageFormat.format(
-                messageConfig.getString(path)!!,
-                strings[0]
-            )
-            2 -> return MessageFormat.format(
-                messageConfig.getString(path)!!,
-                strings[0],
-                strings[1]
-            )
-            3 -> return MessageFormat.format(
-                messageConfig.getString(path)!!,
-                strings[0],
-                strings[1],
-                strings[2]
-            )
-            4 -> return MessageFormat.format(
-                messageConfig.getString(path)!!,
-                strings[0],
-                strings[1],
-                strings[2],
-                strings[3]
-            )
-            5 -> return MessageFormat.format(
-                messageConfig.getString(path)!!,
-                strings[0],
-                strings[1],
-                strings[2],
-                strings[3],
-                strings[4]
-            )
-        }
-        return null
+        return String.format(messageConfig.getString(path)!!, strings)
     }
 
 }

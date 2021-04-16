@@ -32,9 +32,8 @@ class CreateKingdomCommand {
                                 KingdomsMain.getMessage().load(
                                     "CreateKingdom",
                                     name,
-                                    player.name,
-                                    sender.name
-                                )!!
+                                    player.name
+                                )
                             ),
                             "" // Sends the message to everyone on server
                         )

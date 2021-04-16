@@ -11,6 +11,7 @@ import java.util.stream.Collectors
 
 class DeleteKingdomCommand {
 
+    @Suppress("UNUSED_ANONYMOUS_PARAMETER")
     val deleteKingdom:CommandAPICommand = CommandAPICommand("deletekingdom")
         .withAliases("kingdomdelete")
         .withPermission("kingdoms.ManageKingdoms")
@@ -35,9 +36,8 @@ class DeleteKingdomCommand {
                             Component.text(
                                 KingdomsMain.getMessage().load(
                                     "DeleteKingdom",
-                                    kingdomName,
-                                    sender.name
-                                )!!
+                                    kingdomName
+                                )
                             ),
                             ""
                         )

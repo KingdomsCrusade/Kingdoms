@@ -1,5 +1,5 @@
 plugins{
-    id 'org.jetbrains.kotlin.jvm' version '1.4.30' apply false
+    id 'org.jetbrains.kotlin.jvm' version '1.4.32' apply false
 }
 
 allprojects {
@@ -13,6 +13,15 @@ allprojects {
             implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8' // Kotlin standard library
         }
 
+        /*
+
+
+        You have to manually add kotlinOptions.jvmTarget to the build.gradle of
+        each subproject that uses Kotlin to stop the IDE from complaining about
+        recompiling Kotlin to target JVM 1.8.
+
+        Code:
+        +------------------------------------------------------------------------+
         compileKotlin {
             kotlinOptions {
                 jvmTarget = "1.8" // Targeting Java 1.8
@@ -23,6 +32,10 @@ allprojects {
                 jvmTarget = "1.8" // Targeting Java 1.8
             }
         }
+        +------------------------------------------------------------------------+
+        
+
+        */
 
     }
 }
