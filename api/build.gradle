@@ -3,7 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
 
-version 'unspecified'
+group = 'com.kingdomscrusade.kingdoms'
+version = 'unspecified'
 
 repositories {
     mavenCentral()

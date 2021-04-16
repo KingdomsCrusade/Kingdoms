@@ -1,4 +1,3 @@
-rootProject.name = 'Kingdoms'
+rootProject.name = 'kingdoms'
 include 'plugin'
 include 'api'
-
