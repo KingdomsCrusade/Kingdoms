@@ -5,20 +5,26 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 
-class KingdomsAPI(dbFilePath: String) {
+/**
+ * The main class of kingdoms API. A database will be created on class construction
+ *
+ * @param[dbFilePath] The file path of your database. Must end with a database file name.
+ */
+class KingdomsAPI(private val dbFilePath: String): IKingdomsAPI{
 
-    private val databaseConnection: Connection
+    override lateinit var database: Connection
 
     init {
         val databaseFile = File(dbFilePath)
         if (!databaseFile.exists()){
-            databaseConnection = DriverManager.getConnection("jdbc:sqlite:$dbFilePath")
+            connect()
             createDatabaseStructure()
-        } else databaseConnection = DriverManager.getConnection("jdbc:sqlite:$dbFilePath")
+        }
+        else connect()
     }
 
     private fun createDatabaseStructure() {
-        val statement = databaseConnection.createStatement()
+        val statement = database.createStatement()
         statement.executeUpdate(
             """
                 CREATE TABLE Kingdoms (
@@ -61,16 +67,45 @@ class KingdomsAPI(dbFilePath: String) {
         )
     }
 
-    fun executeUpdate(update: String): Int =
-        databaseConnection.createStatement().executeUpdate(update)
+    /**
+     * Executes any update command to the database.
+     *
+     * @param[update] An SQL query string
+     * @return Number of rows updated
+     */
+    override fun executeUpdate(update: String): Int =
+        database.createStatement().executeUpdate(update)
 
-    fun executeQuery(query: String): ResultSet =
-        databaseConnection.createStatement().executeQuery(query)
+    /**
+     * Executes any query command to the database.
+     *
+     * @param[query] An SQL query string
+     * @return A ResultSet object that contains the queries
+     */
+    override fun executeQuery(query: String): ResultSet =
+        database.createStatement().executeQuery(query)
 
-    fun closeConnection() {
-        databaseConnection.close()
+    /**
+     * Establishes connection with database.
+     * This method should only be used during class construction.
+     */
+    override fun connect() {
+        database = DriverManager.getConnection("jdbc:sqlite:$dbFilePath")
     }
 
-    fun isClosed() =
-        databaseConnection.isClosed
+    /**
+     * Ends connection with database.
+     */
+    override fun disconnect() {
+        database.close()
+    }
+
+    /**
+     * Returns a boolean indicating the database connection status.
+     */
+    override fun isConnected(): Boolean =
+        !database.isClosed
+
+    override fun getActions(): IActions =
+        Actions(this)
 }

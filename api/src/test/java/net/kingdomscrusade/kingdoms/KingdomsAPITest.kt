@@ -9,38 +9,33 @@ import java.util.*
 
 internal class KingdomsAPITest {
 
+    // Public Given
+    private val dbFilePath = "D:/Code/Resources/DummyPluginData.db"
+
     @BeforeEach
     fun deleteExistingDBFile() {
-        File("D:/Code/Resources/DummyPluginData.db").delete()
+        File(dbFilePath).delete()
     }
 
     @Test
-    @DisplayName("Database file creation test")
-    fun creationTest(){
-
-        /* Given */
-        val dbFilePath = "D:/Code/Resources/DummyPluginData.db"
-
-        /* When */
-        KingdomsAPI(dbFilePath)
-
-        /* Then */
-        // Checking if a db file is created
-        val dbFile = File(dbFilePath)
-        assertTrue(dbFile.exists() && dbFile.isFile)
-
-    }
-
-    @Test
-    @DisplayName("Database structure test")
-    fun structureTest(){
-        /* Given */
-        val dbFilePath = "D:/Code/Resources/DummyPluginData.db"
+    @DisplayName("API class construction test")
+    fun constructionTest(){
 
         /* When */
         val api = KingdomsAPI(dbFilePath)
 
         /* Then */
+        checkDBCreation()
+        checkDBStructure(api)
+
+    }
+
+    private fun checkDBCreation(){
+        val dbFile = File(dbFilePath)
+        assertTrue(dbFile.exists() && dbFile.isFile)
+    }
+
+    private fun checkDBStructure(api: KingdomsAPI){
         // Checking column counts of every table
         assertEquals( // Kingdoms
             2,
@@ -58,14 +53,12 @@ internal class KingdomsAPITest {
             4,
             api.executeQuery("SELECT * FROM Users").metaData.columnCount
         )
-
     }
 
     @Test
     @DisplayName("Method \"executeUpdate\", \"executeQuery\" and \"closeConnection\" test")
     fun executionTest(){
         /* Given */
-        val dbFilePath = "D:/Code/Resources/DummyPluginData.db"
         val kingdomUUID = UUID.randomUUID()
         val kingdomName = "Midgard"
 
@@ -83,8 +76,8 @@ internal class KingdomsAPITest {
         assertEquals(kingdomName, query.getString("kingdom_name"))
 
         // closeConnection test
-        api.closeConnection()
-        assertTrue(api.isClosed())
+        api.disconnect()
+        assertFalse(api.isConnected())
     }
 
 }
