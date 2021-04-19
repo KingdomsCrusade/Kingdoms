@@ -3,14 +3,13 @@ package net.kingdomscrusade.kingdoms
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
-import java.sql.ResultSet
 
 /**
  * The main class of kingdoms API. A database will be created on class construction
  *
  * @param[dbFilePath] The file path of your database. Must end with a database file name.
  */
-class KingdomsAPI(private val dbFilePath: String): IKingdomsAPI{
+class KingdomsAPI(private val dbFilePath: String): IDatabase{
 
     override lateinit var database: Connection
 
@@ -68,44 +67,20 @@ class KingdomsAPI(private val dbFilePath: String): IKingdomsAPI{
     }
 
     /**
-     * Executes any update command to the database.
-     *
-     * @param[update] An SQL query string
-     * @return Number of rows updated
-     */
-    override fun executeUpdate(update: String): Int =
-        database.createStatement().executeUpdate(update)
-
-    /**
-     * Executes any query command to the database.
-     *
-     * @param[query] An SQL query string
-     * @return A ResultSet object that contains the queries
-     */
-    override fun executeQuery(query: String): ResultSet =
-        database.createStatement().executeQuery(query)
-
-    /**
      * Establishes connection with database.
      * This method should only be used during class construction.
      */
-    override fun connect() {
+    private fun connect() {
         database = DriverManager.getConnection("jdbc:sqlite:$dbFilePath")
     }
 
     /**
      * Ends connection with database.
      */
-    override fun disconnect() {
+    fun disconnect() {
         database.close()
     }
 
-    /**
-     * Returns a boolean indicating the database connection status.
-     */
-    override fun isConnected(): Boolean =
-        !database.isClosed
-
-    override fun getActions(): IActions =
+    fun getActions(): IActions =
         Actions(this)
 }
