@@ -36,11 +36,6 @@ repositories {
     //noinspection GroovyAssignabilityCheck
     maven { url 'https://repo.codemc.org/repository/maven-public/' }
 
-    /* Test Modules */
-    // MockBukkit
-    //noinspection GroovyAssignabilityCheck
-    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/public/' }
-
 }
 
 dependencies {
@@ -50,37 +45,11 @@ dependencies {
         because 'Project extends from Paper JavaPlugin class'
     }
 
-    // MongoDB
-    implementation('org.mongodb:mongodb-driver-sync:4.2.2') {
-        because 'MongoDB Driver, Database usage'
-    }
-    implementation('org.mongojack:mongojack:4.0.2') {
-        because 'Mapping Mongos to POJOs'
-    }
-
     /* Helpers */
     // CommandAPI
     implementation("dev.jorel:commandapi-shade:${commandapi_version}"){
         because 'Avoid command boilerplates'
     }
-
-    /* Test Modules */
-    // Junit 5
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.1'
-
-    // Mockito
-    testImplementation 'org.mockito:mockito-core:3.+'
-
-    // MockBukkit
-    testImplementation 'com.github.seeseemelk:MockBukkit-v1.16:0.25.0'
-
-    // Fongo
-    testImplementation 'com.github.fakemongo:fongo:2.1.0'
-}
-
-test{
-    useJUnitPlatform()
 }
 
 shadowJar {
