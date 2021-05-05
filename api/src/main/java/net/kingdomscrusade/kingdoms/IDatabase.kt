@@ -31,6 +31,10 @@ interface IDatabase {
     fun prepareStatement(statement: String): PreparedStatement =
         database.prepareStatement(statement)
 
+    fun disconnect(){
+        database.close()
+    }
+
     /**
      * Returns a boolean indicating the database connection status.
      */

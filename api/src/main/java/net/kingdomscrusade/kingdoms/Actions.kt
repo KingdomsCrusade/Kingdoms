@@ -5,6 +5,7 @@ import java.util.*
 class Actions(override val api: IDatabase): IActions {
 
     /* Low-level write operations */
+    // Only low-level write operations are implemented as read operations are complex
     private val addKingdomStatement = api.prepareStatement("INSERT INTO Kingdoms VALUES(?, ?);")
     override fun addKingdom(kingdomUUID: UUID, kingdomName: String) {
         addKingdomStatement.setString(1, kingdomUUID.toString())
@@ -58,38 +59,5 @@ class Actions(override val api: IDatabase): IActions {
     override fun removePermission(permissionID: Int) {
         removePermissionStatement.setInt(1, permissionID)
         removePermissionStatement.executeUpdate()
-    }
-
-    /* Low level read operations */
-    override fun readKingdom(kingdomUUID: UUID) {
-        TODO("Not yet implemented")
-    }
-
-    override fun readKingdom(kingdomName: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun readUser(userUUID: UUID) {
-        TODO("Not yet implemented")
-    }
-
-    override fun readUser(userName: String) {
-        TODO("Not yet implemented")
-    }
-
-    override fun readRole(roleUUID: UUID) {
-        TODO("Not yet implemented")
-    }
-
-    override fun readRole(roleName: String, roleKingdom: UUID) {
-        TODO("Not yet implemented")
-    }
-
-    override fun readPermission(permissionID: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun readPermission(permissionFlag: String, permissionRole: UUID) {
-        TODO("Not yet implemented")
     }
 }

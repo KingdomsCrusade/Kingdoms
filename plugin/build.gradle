@@ -19,7 +19,7 @@ version = '0.2.0-alpha'
 
 /* Module Versions */
 String paper_version = '1.16.5-R0.1-SNAPSHOT'
-String commandapi_version = '5.9'
+String commandapi_version = '5.11'
 
 repositories {
 
@@ -56,17 +56,6 @@ shadowJar {
     dependencies {
         //noinspection GroovyAssignabilityCheck
         include dependency("dev.jorel:commandapi-shade:${commandapi_version}")
-    }
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8" // Targeting Java 1.8
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8" // Targeting Java 1.8
     }
 }
 
