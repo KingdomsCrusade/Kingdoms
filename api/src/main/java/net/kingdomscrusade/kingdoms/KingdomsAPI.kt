@@ -6,11 +6,13 @@ import java.sql.DriverManager
 class KingdomsAPI(url: String, usr: String, pwd: String) {
 
     private val db = DriverManager.getConnection(url, usr, pwd)
+    companion object {
+        const val ownerUUID = "17717970-5202-6900-2426-000000000001"
+        const val memberUUID = "17717970-5202-6900-2426-000000000002"
+        const val visitorUUID = "17717970-5202-6900-2426-000000000003"
+    }
 
     fun defaultRoleInit(){
-        val ownerUUID =     "17717970-5202-6900-2426-000000000001"
-        val memberUUID =    "17717970-5202-6900-2426-000000000002"
-        val visitorUUID =   "17717970-5202-6900-2426-000000000003"
         db.createStatement().execute(
             """
                 INSERT INTO Roles (role_uuid, role_name, role_permissions) VALUES 
