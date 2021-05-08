@@ -1,19 +1,34 @@
 package net.kingdomscrusade.kingdoms
 
-import java.sql.Connection
+import net.kingdomscrusade.kingdoms.actions.IAction
 import java.sql.DriverManager
 
-/**
- * The main class of kingdoms API. A database will be created on class construction
- */
-class KingdomsAPI(databaseUrl: String, username: String, password: String): IDatabase {
+class KingdomsAPI(url: String, usr: String, pwd: String) {
 
-    override lateinit var database: Connection
-    val actions: IActions = Actions(this)
+    private val db = DriverManager.getConnection(url, usr, pwd)
 
-    init {
-        Class.forName("com.mysql.jdbc.Driver")
-        database = DriverManager.getConnection(databaseUrl, username, password)
+    fun defaultRoleInit(){
+        val ownerUUID =     "17717970-5202-6900-2426-000000000001"
+        val memberUUID =    "17717970-5202-6900-2426-000000000002"
+        val visitorUUID =   "17717970-5202-6900-2426-000000000003"
+        db.createStatement().execute(
+            """
+                INSERT INTO Roles (role_uuid, role_name, role_permissions) VALUES 
+                ($ownerUUID, 'Owner', 
+                    ('ADMIN')
+                ),
+                ($memberUUID, 'Member', 
+                    ('PICK', 'CONTAINER', 'INTERACT', 'BUILD', 'KILL', 'TALK')
+                ),
+                ($visitorUUID, 'Visitor', 
+                    ('INTERACT', 'TALK')
+                );
+            """.trimIndent()
+        )
+    }
+
+    fun execute(action: IAction){
+        action.execute(db)
     }
 
 }
