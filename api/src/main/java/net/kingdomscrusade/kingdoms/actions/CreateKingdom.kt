@@ -13,7 +13,7 @@ class CreateKingdom
 {
     private val kingdomUUID: UUID = UUID.randomUUID()
     override fun execute(database: Connection): String {
-        database.createStatement().execute(
+        database.createStatement().executeUpdate(
             """
                 INSERT INTO Kingdoms VALUE ($kingdomUUID, $kingdomName);
                 INSERT INTO Users VALUE ($userUUID, $userName, $kingdomUUID, ${KingdomsAPI.ownerUUID})

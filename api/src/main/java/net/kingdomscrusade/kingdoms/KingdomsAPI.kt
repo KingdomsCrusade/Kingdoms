@@ -1,36 +1,35 @@
 package net.kingdomscrusade.kingdoms
 
 import net.kingdomscrusade.kingdoms.actions.IAction
+import java.sql.Connection
 import java.sql.DriverManager
 
 class KingdomsAPI(url: String, usr: String, pwd: String) {
 
-    private val db = DriverManager.getConnection(url, usr, pwd)
-    companion object {
-        const val ownerUUID = "17717970-5202-6900-2426-000000000001"
-        const val memberUUID = "17717970-5202-6900-2426-000000000002"
-        const val visitorUUID = "17717970-5202-6900-2426-000000000003"
-    }
+    val db: Connection = DriverManager.getConnection(url, usr, pwd)
 
-    fun defaultRoleInit(){
-        db.createStatement().execute(
-            """
-                INSERT INTO Roles (role_uuid, role_name, role_permissions) VALUES 
-                ($ownerUUID, 'Owner', 
-                    ('ADMIN')
-                ),
-                ($memberUUID, 'Member', 
-                    ('PICK', 'CONTAINER', 'INTERACT', 'BUILD', 'KILL', 'TALK')
-                ),
-                ($visitorUUID, 'Visitor', 
-                    ('INTERACT', 'TALK')
-                );
-            """.trimIndent()
-        )
+    // Default Role UUIDs
+    companion object {
+        const val ownerUUID =   "66e00734-bde4-43c0-a426-46b79075cbb1"
+        const val memberUUID =  "66e00734-bde4-43c0-a426-46b79075cbb2"
+        const val visitorUUID = "66e00734-bde4-43c0-a426-46b79075cbb3"
     }
 
     fun execute(action: IAction){
         action.execute(db)
+    }
+
+    fun isConnected(): Boolean = !db.isClosed
+
+    fun defaultRolesInit(){
+        db.createStatement().executeUpdate(
+            """
+                INSERT INTO Roles (role_uuid, role_name, role_permissions) VALUES 
+                ('$ownerUUID',    'Owner',    ('ADMIN')),
+                ('$memberUUID',   'Member',   ('PICK,CONTAINER,INTERACT,BUILD,KILL,TALK')),
+                ('$visitorUUID',  'Visitor',  ('INTERACT,TALK'));
+            """.trimIndent()
+        )
     }
 
 }
