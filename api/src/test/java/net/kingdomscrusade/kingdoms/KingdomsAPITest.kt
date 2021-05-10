@@ -25,7 +25,7 @@ internal class KingdomsAPITest{
     @DisplayName("Role initialization test")
     fun roleInitTest(){
         testDB.defaultRolesInit()
-        val result = testDB.db.createStatement().executeQuery("SELECT * FROM Roles")
+        val result = testDB.statement.executeQuery("SELECT * FROM Roles")
         while (result.next()){
             for (i in 1..4) {
                 print("${result.getString(i)}\t")

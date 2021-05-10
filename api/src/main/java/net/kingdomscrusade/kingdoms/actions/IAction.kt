@@ -1,7 +1,7 @@
 package net.kingdomscrusade.kingdoms.actions
 
-import java.sql.Connection
+import java.sql.Statement
 
 interface IAction {
-    fun execute(database: Connection): String
+    fun execute(statement: Statement): String
 }

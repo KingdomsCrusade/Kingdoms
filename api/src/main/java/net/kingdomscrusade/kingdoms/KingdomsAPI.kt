@@ -3,10 +3,12 @@ package net.kingdomscrusade.kingdoms
 import net.kingdomscrusade.kingdoms.actions.IAction
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.Statement
 
 class KingdomsAPI(url: String, usr: String, pwd: String) {
 
-    val db: Connection = DriverManager.getConnection(url, usr, pwd)
+    private val database: Connection = DriverManager.getConnection(url, usr, pwd)
+    val statement: Statement = database.createStatement()
 
     // Default Role UUIDs
     companion object {
@@ -16,13 +18,13 @@ class KingdomsAPI(url: String, usr: String, pwd: String) {
     }
 
     fun execute(action: IAction){
-        action.execute(db)
+        action.execute(statement)
     }
 
-    fun isConnected(): Boolean = !db.isClosed
+    fun isConnected(): Boolean = !database.isClosed
 
     fun defaultRolesInit(){
-        db.createStatement().executeUpdate(
+        statement.executeUpdate(
             """
                 INSERT INTO Roles (role_uuid, role_name, role_permissions) VALUES 
                 ('$ownerUUID',    'Owner',    ('ADMIN')),
