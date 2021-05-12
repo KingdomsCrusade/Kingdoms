@@ -1,6 +1,7 @@
-package net.kingdomscrusade.kingdoms.actions
+package net.kingdomscrusade.kingdoms.actions.kingdoms
 
 import net.kingdomscrusade.kingdoms.KingdomsAPI
+import net.kingdomscrusade.kingdoms.actions.IAction
 import java.sql.Statement
 import java.util.*
 
@@ -10,7 +11,7 @@ class CreateKingdom
     private val kingdomName: String,
     private val userUUID: UUID,
     private val userName: String
-    ) :IAction
+    ) : IAction
 {
     override fun execute(statement: Statement): String {
         statement.executeUpdate(

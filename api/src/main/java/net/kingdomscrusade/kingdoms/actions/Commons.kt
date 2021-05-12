@@ -31,7 +31,13 @@ open class Commons {
             "Member"    -> Optional.of(UUID.fromString(KingdomsAPI.memberUUID))
             "Visitor"   -> Optional.of(UUID.fromString(KingdomsAPI.visitorUUID))
             else        -> {
-                val query = statement.executeQuery("SELECT role_uuid FROM Roles WHERE role_kingdom = $roleKingdom")
+                val query = statement.executeQuery("""
+                    SELECT role_uuid FROM Roles WHERE (
+                        role_kingdom = '${getKingdomUUID(roleKingdom, statement).get()}', 
+                        role_name = '$roleName'
+                    );
+                        """.trimIndent()
+                )
                 if (query.next())
                     Optional.of(
                         UUID.fromString(query.getString("role_uuid"))

@@ -1,5 +1,6 @@
-package net.kingdomscrusade.kingdoms.actions
+package net.kingdomscrusade.kingdoms.actions.kingdoms
 
+import net.kingdomscrusade.kingdoms.actions.IAction
 import java.sql.Statement
 import java.util.*
 
@@ -12,7 +13,7 @@ class ChangeKingdomName(
         statement.executeUpdate(
             """
             UPDATE Kingdoms SET kingdom_name = '$newKingdomName' 
-                WHERE kingdom_uuid = '$kingdomUUID';
+            WHERE kingdom_uuid = '$kingdomUUID';
             """.trimIndent())
         return kingdomUUID.toString()
     }
