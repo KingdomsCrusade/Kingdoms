@@ -1,15 +1,16 @@
 package net.kingdomscrusade.kingdoms.actions.kingdoms
 
+import net.kingdomscrusade.kingdoms.actions.Commons
 import net.kingdomscrusade.kingdoms.actions.IAction
 import java.sql.Statement
-import java.util.*
 
 class ChangeKingdomName(
-    private val kingdomUUID: UUID,
+    private val oldKingdomName: String,
     private val newKingdomName: String
-    ): IAction
+    ): IAction, Commons()
 {
     override fun execute(statement: Statement): String {
+        val kingdomUUID = getKingdomUUID(oldKingdomName, statement).get()
         statement.executeUpdate(
             """
             UPDATE Kingdoms SET kingdom_name = '$newKingdomName' 
