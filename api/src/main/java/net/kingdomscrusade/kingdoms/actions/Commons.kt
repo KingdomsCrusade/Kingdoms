@@ -78,6 +78,9 @@ open class Commons {
         builder.toString()
     }
 
+    /**
+     * Gets Role Permissions string by its role UUID.
+     */
     protected val getPermissions: (roleUUID: UUID, statement: Statement) -> Optional<String> = {roleUUID: UUID, statement: Statement ->
         val query = statement.executeQuery(
             """
