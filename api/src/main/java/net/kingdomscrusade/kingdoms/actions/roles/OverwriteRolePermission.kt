@@ -5,29 +5,21 @@ import net.kingdomscrusade.kingdoms.actions.IAction
 import java.security.Permissions
 import java.sql.Statement
 
-class AddRolePermission
+class OverwriteRolePermission
     (
     private val roleName: String,
     private val roleKingdom: String,
-    private val permission: Permissions
+    private val permissions: Set<Permissions>
     ): IAction, Commons()
 {
-
     override fun execute(statement: Statement): String {
         val roleUUID = getRoleUUID(roleName, roleKingdom, statement).get()
-        val oldPermissionList = getPermissions(roleUUID, statement)
-        val newPermissionList =
-            if (oldPermissionList.isPresent)
-                "${oldPermissionList.get()},$permission"
-            else
-                permission.toString()
         statement.executeUpdate(
             """
-                UPDATE Roles SET role_permissions = '$newPermissionList'
+                UPDATE Roles SET role_permissions = '${permissionsToCleanString(permissions)}'
                 WHERE role_uuid = '$roleUUID';
             """.trimIndent()
         )
         return roleUUID.toString()
     }
-
 }
