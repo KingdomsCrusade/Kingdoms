@@ -2,7 +2,7 @@ package net.kingdomscrusade.kingdoms.actions.roles
 
 import net.kingdomscrusade.kingdoms.actions.Commons
 import net.kingdomscrusade.kingdoms.actions.IAction
-import java.security.Permissions
+import net.kingdomscrusade.kingdoms.data.Permissions
 import java.sql.Statement
 import java.util.*
 

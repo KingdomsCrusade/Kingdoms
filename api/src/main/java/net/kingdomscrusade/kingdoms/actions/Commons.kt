@@ -1,7 +1,7 @@
 package net.kingdomscrusade.kingdoms.actions
 
 import net.kingdomscrusade.kingdoms.KingdomsAPI
-import java.security.Permissions
+import net.kingdomscrusade.kingdoms.data.Permissions
 import java.sql.Statement
 import java.util.*
 
@@ -11,7 +11,7 @@ open class Commons {
      * the name only appears once in the database and the
      * kingdom_name column is not null.
      */
-    protected val getKingdomUUID: (kingdomName: String, statement: Statement) -> Optional<UUID> = { kingdomName: String, statement: Statement ->
+     val getKingdomUUID: (kingdomName: String, statement: Statement) -> Optional<UUID> = { kingdomName: String, statement: Statement ->
         val query = statement.executeQuery("SELECT kingdom_uuid FROM Kingdoms WHERE kingdom_name = '$kingdomName';")
         if (query.next())
             Optional.of(
@@ -26,7 +26,7 @@ open class Commons {
      * the name only appears once in the database and the
      * role_name and role_kingdom column is not null.
      */
-    protected val getRoleUUID: (roleName:String, roleKingdom:String, statement: Statement) -> Optional<UUID> = { roleName: String, roleKingdom: String, statement: Statement ->
+     val getRoleUUID: (roleName:String, roleKingdom:String, statement: Statement) -> Optional<UUID> = { roleName: String, roleKingdom: String, statement: Statement ->
         when (roleName) {
             "Owner"     -> Optional.of(UUID.fromString(KingdomsAPI.ownerUUID))
             "Member"    -> Optional.of(UUID.fromString(KingdomsAPI.memberUUID))
@@ -53,7 +53,7 @@ open class Commons {
      * Returns a boolean stating if a duplicate of
      * the role name is found in the kingdom.
      */
-    protected val checkRoleDuplicate: (roleName: String, roleKingdom: String, statement: Statement) -> Boolean = {roleName: String, roleKingdom: String, statement: Statement ->
+     val checkRoleDuplicate: (roleName: String, roleKingdom: String, statement: Statement) -> Boolean = {roleName: String, roleKingdom: String, statement: Statement ->
         statement.executeQuery(
             """
                 SELECT * FROM Roles 
@@ -69,7 +69,7 @@ open class Commons {
      * Converts a Permissions set to a clean
      * string (To string without spaces and brackets).
      */
-    protected val permissionsToCleanString: (Set<Permissions>) -> String = { permissionsSet: Set<Permissions> ->
+     val permissionsToCleanString: (Set<Permissions>) -> String = { permissionsSet: Set<Permissions> ->
         val builder = StringBuilder()
         permissionsSet.forEachIndexed{index: Int, permissions: Permissions ->
             if (index != 0) builder.append(",")
@@ -81,7 +81,7 @@ open class Commons {
     /**
      * Gets Role Permissions string by its role UUID.
      */
-    protected val getPermissions: (roleUUID: UUID, statement: Statement) -> Optional<String> = {roleUUID: UUID, statement: Statement ->
+     val getPermissions: (roleUUID: UUID, statement: Statement) -> Optional<String> = {roleUUID: UUID, statement: Statement ->
         val query = statement.executeQuery(
             """
                 SELECT role_permissions FROM Roles WHERE role_uuid = '$roleUUID'

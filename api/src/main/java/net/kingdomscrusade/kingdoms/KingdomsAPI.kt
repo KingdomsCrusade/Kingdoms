@@ -17,9 +17,7 @@ class KingdomsAPI(url: String, usr: String, pwd: String) {
         const val visitorUUID = "66e00734-bde4-43c0-a426-46b79075cbb3"
     }
 
-    fun execute(action: IAction){
-        action.execute(statement)
-    }
+    fun execute(action: IAction): String = action.execute(statement)
 
     fun isConnected(): Boolean = !database.isClosed
 
