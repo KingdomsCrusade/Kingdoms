@@ -14,12 +14,8 @@ class CreateKingdom
     ) : IAction
 {
     override fun execute(statement: Statement): String {
-        statement.executeUpdate(
-            """
-                INSERT INTO Kingdoms VALUE ('$kingdomUUID', '$kingdomName');
-                INSERT INTO Users VALUE ('$userUUID', '$userName', '$kingdomUUID', '${KingdomsAPI.ownerUUID}';)
-            """.trimIndent()
-        )
+        statement.executeUpdate( "INSERT INTO Kingdoms VALUE ('$kingdomUUID', '$kingdomName');" )
+        statement.executeUpdate( "INSERT INTO Users    VALUE ('$userUUID', '$userName', '$kingdomUUID', '${KingdomsAPI.ownerUUID}');" )
         return kingdomUUID.toString()
     }
 }

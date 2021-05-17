@@ -1,26 +1,21 @@
 package net.kingdomscrusade.kingdoms.actions
 
-import net.kingdomscrusade.kingdoms.KingdomsAPI
+import net.kingdomscrusade.kingdoms.TestCommons
 import net.kingdomscrusade.kingdoms.actions.kingdoms.CreateKingdom
 import net.kingdomscrusade.kingdoms.actions.roles.CreateRole
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
 import net.kingdomscrusade.kingdoms.data.Permissions
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import java.util.*
 
-internal class CommonsTest {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+internal class CommonsTest: TestCommons() {
 
-    // TODO Finish all action tests
-    /*
-    Requires table initialization before starting test.
-     */
+    // TODO Convert all testAPI.execute to use statement.executeUpdate
 
-    private val testAPI: KingdomsAPI= KingdomsAPI(
-        url = "jdbc:mariadb://dev.kingdomscrusade.net:33061/test",
-        usr = "root",
-        pwd = "test"
-    )
-    private val testStatement = testAPI.statement
     private val commons = Commons()
 
     @Test
@@ -58,4 +53,13 @@ internal class CommonsTest {
     fun getGetPermissions() {
         assertEquals("BUILD,CONTAINER", commons.getPermissions(commons.getRoleUUID("Soldier", "Midgard", testStatement).get(), testStatement))
     }
+
+
+    @Test
+    @AfterAll
+    @DisplayName("Test clean up")
+    fun cleanUp(){
+        restoreData(testStatement)
+    }
+
 }
