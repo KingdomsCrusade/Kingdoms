@@ -1,25 +1,19 @@
+//file:noinspection GroovyAssignabilityCheck
 plugins {
-    id 'java'
-    id 'org.jetbrains.kotlin.jvm'
+    /* Kotlin */    id 'org.jetbrains.kotlin.jvm'
 }
 
-group = 'com.kingdomscrusade.kingdoms'
-version = 'unspecified'
+// Package Coordinates //
+group = 'net.kingdomscrusade'
+version = '0.2.0'
 
 repositories {
-    mavenCentral()
+    /* Maven Central */     mavenCentral()
 }
 
 dependencies {
-
-    /* Database Modules */
-    // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
-    implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.34.0'
-    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
-
-    /* Test Modules */
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-
+    /* MariaDB */   implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
+    /* Junit 5 */   testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
 }
 
 test {
