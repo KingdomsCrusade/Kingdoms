@@ -34,7 +34,7 @@ open class Commons {
             else        -> {
                 val query = statement.executeQuery("""
                     SELECT role_uuid FROM Roles WHERE (
-                        role_kingdom = '${getKingdomUUID(roleKingdom, statement).get()}', 
+                        role_kingdom = '${getKingdomUUID(roleKingdom, statement).get()}' AND 
                         role_name = '$roleName'
                     );
                         """.trimIndent()

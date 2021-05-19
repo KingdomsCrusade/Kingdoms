@@ -1,12 +1,10 @@
 package net.kingdomscrusade.kingdoms.actions
 
 import net.kingdomscrusade.kingdoms.TestCommons
-import net.kingdomscrusade.kingdoms.actions.kingdoms.CreateKingdom
 import net.kingdomscrusade.kingdoms.actions.roles.CreateRole
 import net.kingdomscrusade.kingdoms.data.Permissions
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.util.*
@@ -20,23 +18,19 @@ internal class CommonsTest: TestCommons() {
 
     @Test
     fun getGetKingdomUUID() {
-        val uuid = testAPI.execute(CreateKingdom(kingdomName = "Midgard", userUUID = UUID.randomUUID(), userName = "Toger8Don"))
+        // Given
+        val uuid = UUID.randomUUID()
+        val name = "Midgard"
+        // When
+        testStatement.executeUpdate("INSERT INTO Kingdoms VALUES ('$uuid', '$name')")
+        // Then
         assertEquals(uuid, commons.getKingdomUUID("Midgard", testStatement))
     }
 
     @Test
     fun getGetRoleUUID() {
-        val uuid = testAPI.execute(
-            CreateRole(
-                roleName = "Soldier",
-                roleKingdom = "Midgard",
-                rolePermissions = setOf(
-                    Permissions.BUILD,
-                    Permissions.CONTAINER
-                )
-            )
-        )
-        assertEquals(uuid, commons.getRoleUUID("Soldier", "Midgard", testStatement))
+        // When
+        testStatement.executeUpdate("INSERT INTO Roles VALUES ()")
     }
 
     @Test

@@ -14,10 +14,8 @@ class DeleteUser
     override fun execute(statement: Statement): String {
         statement.executeUpdate(
             """
-                DELETE FROM Users WHERE (
-                    user_uuid = '$userUUID', 
-                    user_kingdom = '${getKingdomUUID(userKingdom, statement).get()}'
-                );
+                DELETE FROM Users WHERE 
+                    user_uuid = '$userUUID' AND user_kingdom = '${getKingdomUUID(userKingdom, statement).get()}'
             """.trimIndent()
         )
         return userUUID.toString()

@@ -16,9 +16,9 @@ class ChangeUserRole
         statement.executeUpdate(
             """
                 UPDATE Users
-                SET user_role = ${getRoleUUID(userRole, userKingdom, statement).get()}
+                SET user_role = '${getRoleUUID(userRole, userKingdom, statement).get()}'
                 WHERE (
-                    user_uuid = '$userUUID',
+                    user_uuid = '$userUUID' AND
                     user_kingdom = '${getKingdomUUID(userKingdom, statement).get()}'
                 );
             """.trimIndent()
