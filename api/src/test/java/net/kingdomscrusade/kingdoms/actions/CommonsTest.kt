@@ -55,9 +55,7 @@ internal class CommonsTest: TestCommons() {
     }
 
 
-    @Test
     @AfterAll
-    @DisplayName("Test clean up")
     fun cleanUp(){
         restoreData(testStatement)
     }

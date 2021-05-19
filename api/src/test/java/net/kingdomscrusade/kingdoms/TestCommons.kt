@@ -26,10 +26,7 @@ open class TestCommons {
     protected fun restoreData(statement: Statement){
         // TODO Code update after database upgrade is implemented
         statement.executeUpdate("SET FOREIGN_KEY_CHECKS = 0;")
-        statement.executeUpdate("DELETE FROM Users;")
-        statement.executeUpdate("DELETE FROM Kingdoms;")
-        statement.executeUpdate("DELETE FROM Roles;")
-        statement.executeUpdate("DELETE FROM PluginInfo;")
+        statement.executeUpdate("DROP TABLE Users, Kingdoms, Roles, PluginInfo;")
         statement.executeUpdate("SET FOREIGN_KEY_CHECKS = 1;")
         testAPI.databaseInit()
     }

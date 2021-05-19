@@ -16,9 +16,7 @@ internal class CreateKingdomTest: TestCommons(){
         val uuid = testAPI.execute(CreateKingdom(kingdomName = "England", userUUID = UUID.randomUUID(), userName = "RoyalHighness"))
         assertTrue(exists("Kingdoms", "kingdom_uuid", uuid, testStatement))
     }
-    @Test
     @AfterAll
-    @DisplayName("Test clean up")
     fun cleanUp(){
         restoreData(testStatement)
     }

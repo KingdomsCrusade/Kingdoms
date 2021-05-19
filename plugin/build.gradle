@@ -19,7 +19,6 @@ repositories {
     /* CommandAPI */        maven { url = "https://jitpack.io" }
                             maven { url = "https://repo.codemc.org/repository/maven-public/" }
     /* KotlinBukkitAPI */   maven { url = "http://nexus.devsrsouza.com.br/repository/maven-public/" }
-
 }
 
 dependencies {
