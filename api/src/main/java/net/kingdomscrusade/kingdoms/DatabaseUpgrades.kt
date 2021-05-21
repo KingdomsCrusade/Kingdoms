@@ -2,7 +2,7 @@ package net.kingdomscrusade.kingdoms
 
 import java.sql.Statement
 
-class DatabaseUpgrades {
+internal class DatabaseUpgrades {
     val list = arrayOf( DatabaseUpgrades::upgradeFromV0 )
     private fun upgradeFromV0(statement: Statement) {
         // Creating tables and indices

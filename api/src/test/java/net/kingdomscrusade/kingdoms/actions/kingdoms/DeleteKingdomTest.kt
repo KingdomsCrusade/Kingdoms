@@ -12,12 +12,13 @@ internal class DeleteKingdomTest : TestCommons() {
     @Test
     fun `Kingdom deletion` () {
         // Given
-        val name = "Midgard"
-        testStatement.executeUpdate("INSERT INTO Kingdoms VALUES ('${UUID.randomUUID()}', '$name')")
+        val kName = "Midgard"
+        val kUUID = UUID.randomUUID()
+        testStatement.executeUpdate("INSERT INTO Kingdoms VALUES ('$kUUID', '$kName')")
         // When
-        val uuid = testAPI.execute(DeleteKingdom(name))
+        testAPI.execute(DeleteKingdom(kName))
         // Then
-        assertFalse(exists("Kingdoms", "kingdom_uuid", uuid, testStatement))
+        assertFalse(exists("Kingdoms", "kingdom_uuid", kUUID.toString(), testStatement))
     }
     @AfterAll
     fun `Test clean up` () {

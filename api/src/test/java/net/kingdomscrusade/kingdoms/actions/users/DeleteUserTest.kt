@@ -3,7 +3,7 @@ package net.kingdomscrusade.kingdoms.actions.users
 import net.kingdomscrusade.kingdoms.KingdomsAPI
 import net.kingdomscrusade.kingdoms.TestCommons
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.util.*

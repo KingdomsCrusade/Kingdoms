@@ -2,7 +2,7 @@ package net.kingdomscrusade.kingdoms.actions.roles
 
 import net.kingdomscrusade.kingdoms.actions.Commons
 import net.kingdomscrusade.kingdoms.actions.IAction
-import net.kingdomscrusade.kingdoms.data.Permissions
+import net.kingdomscrusade.kingdoms.types.Permissions
 import java.sql.Statement
 import java.util.*
 
@@ -24,7 +24,7 @@ class CreateRole
                     '$roleUUID', 
                     '$roleName', 
                     '${getKingdomUUID(roleKingdom, statement).get()}', 
-                    '${permissionsToCleanString(rolePermissions)}'
+                    '${permissionToString(rolePermissions)}'
                 );
             """.trimIndent()
         )

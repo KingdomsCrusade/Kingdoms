@@ -2,7 +2,7 @@ package net.kingdomscrusade.kingdoms.actions.roles
 
 import net.kingdomscrusade.kingdoms.actions.Commons
 import net.kingdomscrusade.kingdoms.actions.IAction
-import java.security.Permissions
+import net.kingdomscrusade.kingdoms.types.Permissions
 import java.sql.Statement
 
 class AddRolePermission
@@ -14,11 +14,16 @@ class AddRolePermission
 {
 
     override fun execute(statement: Statement): String {
+        val addPermissionToString: (String, Permissions) -> String = {s, p ->
+            val list = stringToPermissions(s).toMutableSet()
+            list += p
+            permissionToString(list)
+        }
         val roleUUID = getRoleUUID(roleName, roleKingdom, statement).get()
         val oldPermissionList = getPermissions(roleUUID, statement)
         val newPermissionList =
             if (oldPermissionList.isPresent)
-                "${oldPermissionList.get()},$permission"
+                addPermissionToString(oldPermissionList.get(), permission)
             else
                 permission.toString()
         statement.executeUpdate(

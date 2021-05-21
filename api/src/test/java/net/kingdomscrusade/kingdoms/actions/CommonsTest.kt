@@ -1,8 +1,7 @@
 package net.kingdomscrusade.kingdoms.actions
 
 import net.kingdomscrusade.kingdoms.TestCommons
-import net.kingdomscrusade.kingdoms.actions.roles.CreateRole
-import net.kingdomscrusade.kingdoms.data.Permissions
+import net.kingdomscrusade.kingdoms.types.Permissions
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -40,7 +39,7 @@ internal class CommonsTest: TestCommons() {
 
     @Test
     fun getPermissionsToCleanString() {
-        assertEquals("ADMIN,CONTAINER", commons.permissionsToCleanString(setOf(Permissions.ADMIN, Permissions.CONTAINER)))
+        assertEquals("ADMIN,CONTAINER", commons.permissionToString(setOf(Permissions.ADMIN, Permissions.CONTAINER)))
     }
 
     @Test

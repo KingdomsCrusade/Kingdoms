@@ -12,7 +12,7 @@ class ChangeRoleName
     ): IAction, Commons()
 {
     override fun execute(statement: Statement): String {
-        if (checkRoleDuplicate(oldRoleName, kingdomName, statement))
+        if (checkRoleDuplicate(newRoleName, kingdomName, statement))
             throw IllegalArgumentException("Duplicated name found under the same kingdom.")
         val roleUUID = getRoleUUID(oldRoleName, kingdomName, statement).get()
         statement.executeUpdate(

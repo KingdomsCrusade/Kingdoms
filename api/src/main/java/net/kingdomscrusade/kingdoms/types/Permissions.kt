@@ -1,4 +1,4 @@
-package net.kingdomscrusade.kingdoms.data
+package net.kingdomscrusade.kingdoms.types
 
 enum class Permissions {
     ADMIN,

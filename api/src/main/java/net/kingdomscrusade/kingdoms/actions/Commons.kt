@@ -1,7 +1,7 @@
 package net.kingdomscrusade.kingdoms.actions
 
 import net.kingdomscrusade.kingdoms.KingdomsAPI
-import net.kingdomscrusade.kingdoms.data.Permissions
+import net.kingdomscrusade.kingdoms.types.Permissions
 import java.sql.Statement
 import java.util.*
 
@@ -58,7 +58,7 @@ open class Commons {
             """
                 SELECT * FROM Roles 
                 WHERE (
-                    role_name = '$roleName', 
+                    role_name = '$roleName' AND 
                     role_kingdom = '${getKingdomUUID(roleKingdom, statement).get()}'
                 );
             """.trimIndent()
@@ -69,13 +69,25 @@ open class Commons {
      * Converts a Permissions set to a clean
      * string (To string without spaces and brackets).
      */
-     val permissionsToCleanString: (Set<Permissions>) -> String = { permissionsSet: Set<Permissions> ->
+     val permissionToString: (Set<Permissions>) -> String = { permissionsSet: Set<Permissions> ->
         val builder = StringBuilder()
         permissionsSet.forEachIndexed{index: Int, permissions: Permissions ->
             if (index != 0) builder.append(",")
             builder.append(permissions.toString())
         }
         builder.toString()
+    }
+
+    /**
+     * Converts a String to a set of Permissions, assuming
+     * that the String has no other elements other than
+     * Permissions, and is separated by commas.
+     */
+    val stringToPermissions: (String) -> Set<Permissions> = {permissionString: String ->
+        val toReturn = mutableSetOf<Permissions>()
+        if (permissionString.isNotBlank())
+            for (i in permissionString.split(",")) toReturn += Permissions.valueOf(i)
+        toReturn
     }
 
     /**
