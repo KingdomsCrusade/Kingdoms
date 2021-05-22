@@ -4,6 +4,7 @@ import net.kingdomscrusade.kingdoms.api.KingdomsAPI
 import net.kingdomscrusade.kingdoms.api.types.Permissions
 import java.sql.Statement
 import java.util.*
+import kotlin.NoSuchElementException
 
 open class Commons {
     /**
@@ -26,44 +27,54 @@ open class Commons {
      * the name only appears once in the database and the
      * role_name and role_kingdom column is not null.
      */
-     val getRoleUUID: (roleName:String, roleKingdom:String, statement: Statement) -> Optional<UUID> = { roleName: String, roleKingdom: String, statement: Statement ->
-        when (roleName) {
-            "Owner"     -> Optional.of(UUID.fromString(KingdomsAPI.ownerUUID))
-            "Member"    -> Optional.of(UUID.fromString(KingdomsAPI.memberUUID))
-            "Visitor"   -> Optional.of(UUID.fromString(KingdomsAPI.visitorUUID))
-            else        -> {
-                val query = statement.executeQuery("""
-                    SELECT role_uuid FROM Roles WHERE (
-                        role_kingdom = '${getKingdomUUID(roleKingdom, statement).get()}' AND 
-                        role_name = '$roleName'
-                    );
+     val getRoleUUID: (roleName:String, roleKingdom:String, statement: Statement) -> Optional<UUID> =
+        { roleName: String, roleKingdom: String, statement: Statement ->
+            when (roleName) {
+                "Owner"     -> Optional.of(UUID.fromString(KingdomsAPI.ownerUUID))
+                "Member"    -> Optional.of(UUID.fromString(KingdomsAPI.memberUUID))
+                "Visitor"   -> Optional.of(UUID.fromString(KingdomsAPI.visitorUUID))
+                else        -> try
+                {
+                    val query = statement.executeQuery(
+                        """
+                            SELECT role_uuid FROM Roles WHERE (
+                                role_kingdom = '${getKingdomUUID(roleKingdom, statement).get()}' AND 
+                                role_name = '$roleName'
+                            );
                         """.trimIndent()
-                )
-                if (query.next())
-                    Optional.of(
-                        UUID.fromString(query.getString("role_uuid"))
                     )
-                else
+                    if (query.next())
+                        Optional.of(
+                            UUID.fromString(query.getString("role_uuid"))
+                        )
+                    else
+                        Optional.empty()
+                }
+                catch (n: NoSuchElementException) {
                     Optional.empty()
+                }
             }
         }
-    }
 
     /**
      * Returns a boolean stating if a duplicate of
      * the role name is found in the kingdom.
      */
-     val checkRoleDuplicate: (roleName: String, roleKingdom: String, statement: Statement) -> Boolean = {roleName: String, roleKingdom: String, statement: Statement ->
-        statement.executeQuery(
-            """
-                SELECT * FROM Roles 
-                WHERE (
-                    role_name = '$roleName' AND 
-                    role_kingdom = '${getKingdomUUID(roleKingdom, statement).get()}'
-                );
-            """.trimIndent()
-        ).next()
-    }
+     val checkRoleDuplicate: (roleName: String, roleKingdom: String, statement: Statement) -> Boolean =
+        { roleName: String, roleKingdom: String, statement: Statement ->
+            try {
+                statement.executeQuery(
+                    """
+                        SELECT * FROM Roles 
+                        WHERE (
+                            role_name = '$roleName' AND 
+                            role_kingdom = '${getKingdomUUID(roleKingdom, statement).get()}'
+                        );
+                    """.trimIndent()
+                ).next()
+            }
+            catch (n: NoSuchElementException) { false }
+        }
 
     /**
      * Converts a Permissions set to a clean

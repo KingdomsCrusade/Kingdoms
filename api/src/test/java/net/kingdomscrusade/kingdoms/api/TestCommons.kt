@@ -4,11 +4,8 @@ import java.sql.Statement
 
 open class TestCommons {
     // API VARIABLE
-    protected val testAPI: KingdomsAPI = KingdomsAPI(
-        url = "jdbc:mariadb://dev.kingdomscrusade.net:33061/test",
-        usr = "root",
-        pwd = "test"
-    )
+    private val info = DatabaseInfo()
+    protected val testAPI: KingdomsAPI = KingdomsAPI( info.url, info.usr, info.pwd, info.driver )
     protected val testStatement = testAPI.statement
 
     // OPERATIONS
@@ -24,7 +21,6 @@ open class TestCommons {
         }
 
     protected fun restoreData(statement: Statement){
-        // TODO Code update after database upgrade is implemented
         statement.executeUpdate("SET FOREIGN_KEY_CHECKS = 0;")
         statement.executeUpdate("DROP TABLE Users, Kingdoms, Roles, PluginInfo;")
         statement.executeUpdate("SET FOREIGN_KEY_CHECKS = 1;")

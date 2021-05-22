@@ -1,13 +1,26 @@
 package net.kingdomscrusade.kingdoms.api
 
 import net.kingdomscrusade.kingdoms.api.actions.IAction
+import net.kingdomscrusade.kingdoms.api.types.Driver
 import java.sql.*
 
-class KingdomsAPI(url: String, usr: String, pwd: String) {
+class KingdomsAPI(url: String, usr: String, pwd: String, driver: Driver = Driver.MARIADB) {
 
-    private val database: Connection = DriverManager.getConnection(url, usr, pwd)
+    init {
+        when(driver) {
+            Driver.MYSQL ->     Class.forName("com.mysql.cj.jdbc.Driver")
+            Driver.MARIADB ->   Class.forName("org.mariadb.jdbc.Driver")
+        }
+    }
+    private val database: Connection =
+        if (usr.isNotBlank() && pwd.isNotBlank())
+            DriverManager.getConnection(url, usr, pwd)
+        else
+            DriverManager.getConnection(url)
     val statement: Statement = database.createStatement()
     private val currentVersion = 1
+
+    constructor(url: String, driver: Driver) : this(url, "", "", driver)
 
     companion object DefaultRoleUUIDs {
         const val ownerUUID =   "66e00734-bde4-43c0-a426-46b79075cbb1"
