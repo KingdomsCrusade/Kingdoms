@@ -1,0 +1,3 @@
+rootProject.name = 'Kingdoms'
+include 'plugin'
+include 'api'

@@ -1,0 +1,23 @@
+package net.kingdomscrusade.kingdoms.api.actions.users
+
+import net.kingdomscrusade.kingdoms.api.actions.Commons
+import net.kingdomscrusade.kingdoms.api.actions.IAction
+import java.sql.Statement
+import java.util.*
+
+class DeleteUser
+    (
+    private val userUUID: UUID,
+    private val userKingdom: String
+    ): IAction, Commons()
+{
+    override fun execute(statement: Statement): String {
+        statement.executeUpdate(
+            """
+                DELETE FROM Users WHERE 
+                    user_uuid = '$userUUID' AND user_kingdom = '${getKingdomUUID(userKingdom, statement).get()}'
+            """.trimIndent()
+        )
+        return userUUID.toString()
+    }
+}
