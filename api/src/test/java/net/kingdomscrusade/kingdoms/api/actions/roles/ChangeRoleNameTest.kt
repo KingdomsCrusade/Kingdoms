@@ -3,14 +3,12 @@ package net.kingdomscrusade.kingdoms.api.actions.roles
 import net.kingdomscrusade.kingdoms.api.TestCommons
 import net.kingdomscrusade.kingdoms.api.actions.Commons
 import net.kingdomscrusade.kingdoms.api.types.Permissions
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import java.util.*
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ChangeRoleNameTest : TestCommons() {
     @Test
     fun `Role name change test` () {
@@ -29,7 +27,7 @@ internal class ChangeRoleNameTest : TestCommons() {
         assertFalse(exists("Roles", "role_name", oldRName, testStatement))
         assertTrue(exists("Roles", "role_name", newRName, testStatement))
     }
-    @AfterAll
+    @AfterEach
     fun `Test clean up` () {
         restoreData(testStatement)
     }

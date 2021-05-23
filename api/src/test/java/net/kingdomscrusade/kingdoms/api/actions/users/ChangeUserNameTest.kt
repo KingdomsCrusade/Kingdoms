@@ -2,13 +2,11 @@ package net.kingdomscrusade.kingdoms.api.actions.users
 
 import net.kingdomscrusade.kingdoms.api.KingdomsAPI
 import net.kingdomscrusade.kingdoms.api.TestCommons
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import java.util.*
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ChangeUserNameTest : TestCommons() {
     @Test
     fun `Change user name` () {
@@ -32,7 +30,7 @@ internal class ChangeUserNameTest : TestCommons() {
         assertEquals(uuid, qUUID)
         assertFalse(exists("Users", "user_name", oldName, testStatement))
     }
-    @AfterAll
+    @AfterEach
     fun `Test clean up` () {
         restoreData(testStatement)
     }

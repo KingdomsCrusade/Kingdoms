@@ -3,13 +3,11 @@ package net.kingdomscrusade.kingdoms.api.actions.roles
 import net.kingdomscrusade.kingdoms.api.TestCommons
 import net.kingdomscrusade.kingdoms.api.actions.Commons
 import net.kingdomscrusade.kingdoms.api.types.Permissions
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import java.util.*
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class CreateRoleTest : TestCommons() {
     @Test
     fun `Role creation test` () {
@@ -36,7 +34,7 @@ internal class CreateRoleTest : TestCommons() {
         assertTrue(exists("Roles", "role_uuid", uuid, testStatement))
         assertEquals(rPerm, Commons().stringToPermissions(qPerm))
     }
-    @AfterAll
+    @AfterEach
     fun `Test clean up` () {
         restoreData(testStatement)
     }

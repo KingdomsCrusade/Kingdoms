@@ -3,14 +3,12 @@ package net.kingdomscrusade.kingdoms.api.actions.roles
 import net.kingdomscrusade.kingdoms.api.TestCommons
 import net.kingdomscrusade.kingdoms.api.actions.Commons
 import net.kingdomscrusade.kingdoms.api.types.Permissions
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import java.util.*
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class OverwriteRolePermissionTest : TestCommons() {
     @Test
     fun `Role permission overwrite test` () {
@@ -35,7 +33,7 @@ internal class OverwriteRolePermissionTest : TestCommons() {
         print(qPerm)
         assertEquals(rPermOw, Commons().stringToPermissions(qPerm))
     }
-    @AfterAll
+    @AfterEach
     fun `Test clean up` () {
         restoreData(testStatement)
     }

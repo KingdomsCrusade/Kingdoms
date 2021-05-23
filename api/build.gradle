@@ -15,7 +15,6 @@ dependencies {
     /* MySQL */     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.25'
     /* MariaDB */   implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.2'
     /* Junit 5 */   testImplementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-    /* Mockito */   testImplementation "org.mockito:mockito-core:3.+"
 }
 
 test {

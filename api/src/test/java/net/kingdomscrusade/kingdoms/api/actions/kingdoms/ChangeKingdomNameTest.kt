@@ -1,13 +1,11 @@
 package net.kingdomscrusade.kingdoms.api.actions.kingdoms
 
 import net.kingdomscrusade.kingdoms.api.TestCommons
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import java.util.*
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ChangeKingdomNameTest : TestCommons() {
     @Test
     fun `Kingdom name change` () {
@@ -19,15 +17,15 @@ internal class ChangeKingdomNameTest : TestCommons() {
         val uuid = testAPI.execute(ChangeKingdomName(oldName, newName))
         // Then
         val query = testStatement.executeQuery("SELECT kingdom_uuid FROM Kingdoms WHERE kingdom_name = '$newName';")
-        val quuid =
+        val qUUID =
             if (query.next())
                 query.getString("kingdom_uuid")
             else
                 fail("No kingdom found with variable 'newName'.")
-        assertEquals(uuid, quuid)
+        assertEquals(uuid, qUUID)
         assertFalse(exists("Kingdoms", "kingdom_name", oldName, testStatement))
     }
-    @AfterAll
+    @AfterEach
     fun `Test clean up` () {
         restoreData(testStatement)
     }

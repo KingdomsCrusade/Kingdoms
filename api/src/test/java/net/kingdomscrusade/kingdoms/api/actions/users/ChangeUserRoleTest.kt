@@ -2,14 +2,12 @@ package net.kingdomscrusade.kingdoms.api.actions.users
 
 import net.kingdomscrusade.kingdoms.api.KingdomsAPI
 import net.kingdomscrusade.kingdoms.api.TestCommons
-import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
 import java.util.*
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 internal class ChangeUserRoleTest : TestCommons() {
     @Test
     fun `Change user role` () {
@@ -34,7 +32,7 @@ internal class ChangeUserRoleTest : TestCommons() {
                 fail("No user found with variable 'uUUID'.")
         assertEquals(newRoleUUID, qRole)
     }
-    @AfterAll
+    @AfterEach
     fun `Test clean up` () {
         restoreData(testStatement)
     }
