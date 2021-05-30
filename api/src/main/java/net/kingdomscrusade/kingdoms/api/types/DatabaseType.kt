@@ -1,6 +1,6 @@
 package net.kingdomscrusade.kingdoms.api.types
 
-enum class Driver {
+enum class DatabaseType {
     MYSQL,
     MARIADB
 }

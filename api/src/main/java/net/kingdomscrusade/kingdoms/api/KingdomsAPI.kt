@@ -1,15 +1,15 @@
 package net.kingdomscrusade.kingdoms.api
 
 import net.kingdomscrusade.kingdoms.api.actions.IAction
-import net.kingdomscrusade.kingdoms.api.types.Driver
+import net.kingdomscrusade.kingdoms.api.types.DatabaseType
 import java.sql.*
 
-class KingdomsAPI(url: String, usr: String, pwd: String, driver: Driver = Driver.MARIADB) {
+class KingdomsAPI(url: String, usr: String, pwd: String, driver: DatabaseType = DatabaseType.MARIADB) {
 
     init {
         when(driver) {
-            Driver.MYSQL ->     Class.forName("com.mysql.cj.jdbc.Driver")
-            Driver.MARIADB ->   Class.forName("org.mariadb.jdbc.Driver")
+            DatabaseType.MYSQL ->     Class.forName("com.mysql.cj.jdbc.Driver")
+            DatabaseType.MARIADB ->   Class.forName("org.mariadb.jdbc.Driver")
         }
     }
     private val database: Connection =
@@ -20,7 +20,7 @@ class KingdomsAPI(url: String, usr: String, pwd: String, driver: Driver = Driver
     val statement: Statement = database.createStatement()
     private val currentVersion = 1
 
-    constructor(url: String, driver: Driver) : this(url, "", "", driver)
+    constructor(url: String, driver: DatabaseType) : this(url, "", "", driver)
 
     companion object DefaultRoleUUIDs {
         const val ownerUUID =   "66e00734-bde4-43c0-a426-46b79075cbb1"
