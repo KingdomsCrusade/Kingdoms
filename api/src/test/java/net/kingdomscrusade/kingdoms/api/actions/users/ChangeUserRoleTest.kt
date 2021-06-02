@@ -16,9 +16,9 @@ internal class ChangeUserRoleTest : TestCommons() {
         val uName = "MrRazamataz"
         val kUUID = UUID.randomUUID()
         val kName = "AlienEmpire"
-        val oldRoleUUID = KingdomsAPI.visitorUUID
+        val oldRoleUUID = KingdomsAPI.visitor
         val newRole = "Member"
-        val newRoleUUID = KingdomsAPI.memberUUID
+        val newRoleUUID = KingdomsAPI.member
         testStatement.executeUpdate("INSERT INTO Kingdoms VALUES ('$kUUID', '$kName')")
         testStatement.executeUpdate("INSERT INTO Users VALUES ('$uUUID', '$uName', '$kUUID', '$oldRoleUUID')")
         // When

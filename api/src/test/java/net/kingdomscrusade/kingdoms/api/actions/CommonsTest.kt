@@ -42,9 +42,9 @@ internal class CommonsTest : TestCommons() {
         val member = c.getRoleUUID("Member", "Whatever", testStatement)
         val visitor = c.getRoleUUID("Visitor", "Whatever", testStatement)
         // Then
-        assertEquals(KingdomsAPI.ownerUUID, owner.get().toString())
-        assertEquals(KingdomsAPI.memberUUID, member.get().toString())
-        assertEquals(KingdomsAPI.visitorUUID, visitor.get().toString())
+        assertEquals(KingdomsAPI.owner, owner.get().toString())
+        assertEquals(KingdomsAPI.member, member.get().toString())
+        assertEquals(KingdomsAPI.visitor, visitor.get().toString())
     }
 
     @Test

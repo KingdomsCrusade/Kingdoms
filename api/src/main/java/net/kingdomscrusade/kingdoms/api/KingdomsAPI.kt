@@ -1,57 +1,66 @@
 package net.kingdomscrusade.kingdoms.api
 
-import net.kingdomscrusade.kingdoms.api.actions.IAction
+import net.kingdomscrusade.kingdoms.api.tables.PluginInfo
 import net.kingdomscrusade.kingdoms.api.types.DatabaseType
+import net.kingdomscrusade.kingdoms.api.types.InfoType
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.sql.*
 
-class KingdomsAPI(url: String, usr: String, pwd: String, driver: DatabaseType = DatabaseType.MARIADB) {
+class KingdomsAPI(url: String, usr: String, pwd: String, databaseType: DatabaseType = DatabaseType.MARIADB) {
+
+    companion object {
+        // Database Info
+        const val currentVersion = 1
+        // UUIDs
+        const val owner =   "66e00734-bde4-43c0-a426-46b79075cbb1"
+        const val member =  "66e00734-bde4-43c0-a426-46b79075cbb2"
+        const val visitor = "66e00734-bde4-43c0-a426-46b79075cbb3"
+    }
+
+    // Another constructor for databases without usr and pwd
+    constructor(url: String, databaseType: DatabaseType = DatabaseType.MARIADB) : this(url, "", "", databaseType)
 
     init {
-        when(driver) {
-            DatabaseType.MYSQL ->     Class.forName("com.mysql.cj.jdbc.Driver")
-            DatabaseType.MARIADB ->   Class.forName("org.mariadb.jdbc.Driver")
+        val driver = when(databaseType) {
+            DatabaseType.MARIADB -> "com.mysql.cj.jdbc.Driver"
+            DatabaseType.MYSQL -> "org.mariadb.jdbc.Driver"
         }
-    }
-    private val database: Connection =
         if (usr.isNotBlank() && pwd.isNotBlank())
-            DriverManager.getConnection(url, usr, pwd)
+            Database.connect(
+                url = url,
+                driver = driver,
+                user = usr,
+                password = pwd
+            )
         else
-            DriverManager.getConnection(url)
-    val statement: Statement = database.createStatement()
-    private val currentVersion = 1
-
-    constructor(url: String, driver: DatabaseType) : this(url, "", "", driver)
-
-    companion object DefaultRoleUUIDs {
-        const val ownerUUID =   "66e00734-bde4-43c0-a426-46b79075cbb1"
-        const val memberUUID =  "66e00734-bde4-43c0-a426-46b79075cbb2"
-        const val visitorUUID = "66e00734-bde4-43c0-a426-46b79075cbb3"
+            Database.connect(
+                url = url,
+                driver = driver
+            )
     }
 
-    fun execute(action: IAction): String = action.execute(statement)
-
-    // Database Initialization
+    /* Database Initialization */
     init {
         databaseInit()
     }
 
     fun databaseInit(){
         // Getting version number
-        val query: ResultSet
-        var version = 0
-        try {
-            query = statement.executeQuery("SELECT _value FROM PluginInfo WHERE _key = 'version_number';")
-            version =
-                if (query.next())
-                    query.getInt("_value")
-                else 0
-        } catch (e: SQLSyntaxErrorException) { }
-
+        val version = transaction {
+            PluginInfo
+                .select { PluginInfo.key eq InfoType.VERSION_NUMBER }
+                .map { it[PluginInfo.value] }
+                .firstOrNull()
+                ?.toInt()
+                ?: 0
+        }
         // Performing upgrade operation
         val module = DatabaseUpgrades()
         val list = module.list
         for (i in version..list.lastIndex)
-            list[i](module, statement)
+            list[i](module)
 
         // Recording version
         if (statement.executeUpdate("UPDATE PluginInfo SET _value = '$currentVersion' WHERE _key = 'version_number'") == 0)

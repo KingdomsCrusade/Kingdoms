@@ -1,24 +1,50 @@
 package net.kingdomscrusade.kingdoms.api
 
-import java.sql.Statement
+import net.kingdomscrusade.kingdoms.api.tables.*
+import net.kingdomscrusade.kingdoms.api.types.Permissions
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.transactions.transaction
+import java.util.*
 
 internal class DatabaseUpgrades {
     val list = arrayOf( DatabaseUpgrades::upgradeFromV0 )
-    private fun upgradeFromV0(statement: Statement) {
-        // Creating tables and indices
-        statement.executeUpdate("create table Kingdoms ( kingdom_uuid char(36) not null primary key, kingdom_name char(12) not null unique );")
-        statement.executeUpdate("create table Roles ( role_uuid char(36) not null primary key, role_name char(12) not null, role_kingdom char(36) references Kingdoms (kingdom_uuid) on update cascade on delete cascade, role_permissions set( 'ADMIN', 'MANAGE', 'PICK', 'CONTAINER', 'INTERACT', 'BUILD', 'KILL', 'TALK' ) );")
-        statement.executeUpdate("create table Users ( user_uuid char(36) not null primary key, user_name char(16) not null unique, user_kingdom char(36) not null references Kingdoms (kingdom_uuid) on update cascade on delete cascade, user_role char(36) references Roles (role_uuid) on update cascade on delete set null );")
-        statement.executeUpdate("create table PluginInfo ( _key enum('version_number') not null unique, _value char not null );")
-
-        // Initializing default variables
-        statement.executeUpdate(
-            """
-                INSERT INTO Roles (role_uuid, role_name, role_permissions) VALUES 
-                ('${KingdomsAPI.ownerUUID}',    'Owner',    ('ADMIN')),
-                ('${KingdomsAPI.memberUUID}',   'Member',   ('PICK,CONTAINER,INTERACT,BUILD,KILL,TALK')),
-                ('${KingdomsAPI.visitorUUID}',  'Visitor',  ('INTERACT,TALK'));
-            """.trimIndent()
+    private fun upgradeFromV0() {
+        // Variables
+        val ownerUUID = UUID.fromString(KingdomsAPI.owner)
+        val memberUUID = UUID.fromString(KingdomsAPI.member)
+        val visitorUUID = UUID.fromString(KingdomsAPI.visitor)
+        val roles = mapOf<String, UUID>(
+            "Owner" to ownerUUID,
+            "Member" to memberUUID,
+            "Visitor" to visitorUUID
         )
+        val permissions = mapOf<UUID, Permissions>(
+            ownerUUID to Permissions.ADMIN,
+            memberUUID to Permissions.CONTAINER,
+            memberUUID to Permissions.BUILD,
+            memberUUID to Permissions.TALK,
+            memberUUID to Permissions.PICK,
+            memberUUID to Permissions.INTERACT,
+            memberUUID to Permissions.KILL,
+            visitorUUID to Permissions.INTERACT,
+            visitorUUID to Permissions.TALK,
+        )
+        transaction {
+            // Creating Tables
+            SchemaUtils.create(Kingdoms, Roles, RoleToPermissions, Users, PluginInfo)
+            // Inserting Roles
+            for (role in roles)
+                Roles.insert {
+                    it[name] = role.key
+                    it[uuid] = role.value
+                }
+            // Inserting Permissions
+            for (permission in permissions)
+                RoleToPermissions.insert {
+                    it[ref] = permission.key
+                    it[value] = permission.value
+                }
+        }
     }
 }

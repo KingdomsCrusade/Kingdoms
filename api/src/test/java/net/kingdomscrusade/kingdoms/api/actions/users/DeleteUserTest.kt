@@ -16,7 +16,7 @@ internal class DeleteUserTest : TestCommons() {
         val kUUID = UUID.randomUUID()
         val kName = "Auraxis"
         testStatement.executeUpdate("INSERT INTO Kingdoms VALUES ('$kUUID', '$kName')")
-        testStatement.executeUpdate("INSERT INTO Users VALUES ('$uUUID', '$uName', '$kUUID', '${KingdomsAPI.visitorUUID}')")
+        testStatement.executeUpdate("INSERT INTO Users VALUES ('$uUUID', '$uName', '$kUUID', '${KingdomsAPI.visitor}')")
         // When
         testAPI.execute(DeleteUser(uUUID, kName))
         // Then

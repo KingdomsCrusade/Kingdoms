@@ -17,7 +17,7 @@ internal class ChangeUserNameTest : TestCommons() {
         val kUUID = UUID.randomUUID()
         val kName = "Elvander"
         testStatement.executeUpdate("INSERT INTO Kingdoms VALUES ('$kUUID', '$kName')")
-        testStatement.executeUpdate("INSERT INTO Users VALUES ('$uUUID', '$oldName', '$kUUID', '${KingdomsAPI.visitorUUID}')")
+        testStatement.executeUpdate("INSERT INTO Users VALUES ('$uUUID', '$oldName', '$kUUID', '${KingdomsAPI.visitor}')")
         // When
         val uuid = testAPI.execute(ChangeUserName(uUUID, newName))
         // Then

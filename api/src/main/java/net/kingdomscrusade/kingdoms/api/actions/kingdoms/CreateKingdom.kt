@@ -15,7 +15,7 @@ class CreateKingdom
 {
     override fun execute(statement: Statement): String {
         statement.executeUpdate( "INSERT INTO Kingdoms VALUE ('$kingdomUUID', '$kingdomName');" )
-        statement.executeUpdate( "INSERT INTO Users    VALUE ('$userUUID', '$userName', '$kingdomUUID', '${KingdomsAPI.ownerUUID}');" )
+        statement.executeUpdate( "INSERT INTO Users    VALUE ('$userUUID', '$userName', '$kingdomUUID', '${KingdomsAPI.owner}');" )
         return kingdomUUID.toString()
     }
 }

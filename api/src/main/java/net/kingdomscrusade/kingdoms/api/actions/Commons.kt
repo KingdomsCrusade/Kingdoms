@@ -30,9 +30,9 @@ open class Commons {
      val getRoleUUID: (roleName:String, roleKingdom:String, statement: Statement) -> Optional<UUID> =
         { roleName: String, roleKingdom: String, statement: Statement ->
             when (roleName) {
-                "Owner"     -> Optional.of(UUID.fromString(KingdomsAPI.ownerUUID))
-                "Member"    -> Optional.of(UUID.fromString(KingdomsAPI.memberUUID))
-                "Visitor"   -> Optional.of(UUID.fromString(KingdomsAPI.visitorUUID))
+                "Owner"     -> Optional.of(UUID.fromString(KingdomsAPI.owner))
+                "Member"    -> Optional.of(UUID.fromString(KingdomsAPI.member))
+                "Visitor"   -> Optional.of(UUID.fromString(KingdomsAPI.visitor))
                 else        -> try
                 {
                     val query = statement.executeQuery(
