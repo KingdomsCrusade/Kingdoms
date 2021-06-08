@@ -1,10 +1,12 @@
 package net.kingdomscrusade.kingdoms.api
 
 import io.kotest.common.ExperimentalKotest
+import io.kotest.core.script.context
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.shouldBe
 import org.jetbrains.exposed.sql.transactions.transaction
+import net.kingdomscrusade.kingdoms.api.KingdomsApi as api
 
 @ExperimentalKotest
 class KingdomsAPITest : BehaviorSpec({
@@ -14,7 +16,7 @@ class KingdomsAPITest : BehaviorSpec({
         val usr = Config.usr
         val pwd = Config.pwd
         When("KingdomsAPI.connect is called") {
-            KingdomsAPI.connect(url, usr, pwd)
+            api.connect(url, usr, pwd)
             Then("system should perform database migration") {
                 val tableList: MutableList<String> = mutableListOf()
                 transaction { exec("SHOW TABLES;") {
@@ -25,6 +27,20 @@ class KingdomsAPITest : BehaviorSpec({
                 withData(listOf( "Kingdoms", "Users", "Roles", "Permissions" )) { table ->
                     tableList.contains(table) shouldBe true
                 }
+            }
+            Then ("user should be able to execute CRUD operations"){
+                context("create") { TODO() }
+                context("read") { TODO() }
+                context("update") { TODO() }
+                context("delete") { TODO() }
+            }
+        }
+        When("KingdomAPI.connect is not called") {
+            Then ("user should not be able to execute CRUD operations"){
+                context("create") { TODO() }
+                context("read") { TODO() }
+                context("update") { TODO() }
+                context("delete") { TODO() }
             }
         }
     }

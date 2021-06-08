@@ -3,7 +3,6 @@
 package net.kingdomscrusade.kingdoms.api.repository
 
 import net.kingdomscrusade.kingdoms.api.model.PermissionType
-import org.jetbrains.exposed.sql.CustomFunction
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 import java.util.*

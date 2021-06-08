@@ -3,6 +3,8 @@ package net.kingdomscrusade.kingdoms.api.model
 import java.util.*
 
 data class Kingdom(
-    val kingdomId: UUID,
-    val name: String,
-)
+    var id: UUID?,
+    var name: String?,
+) : ApiModels {
+    constructor(name: String?) : this(id = null, name)
+}

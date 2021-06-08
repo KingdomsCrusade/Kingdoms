@@ -15,8 +15,11 @@ enum class PermissionType {
 }
 
 data class Role(
-    val roleId : UUID,
-    val roleName: String,
-    val rolePermissions: Set<PermissionType>,
-    val kingdomId: UUID,
-)
+    var id : UUID?,
+    var name: String?,
+    var permissions: Set<PermissionType>?,
+    var kingdomId: UUID?,
+) : ApiModels {
+    constructor(name: String?, kingdomId: UUID?) : this(id = null, name, permissions = null, kingdomId)
+}
+
