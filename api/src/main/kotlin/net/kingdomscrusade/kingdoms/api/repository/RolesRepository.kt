@@ -5,10 +5,9 @@ package net.kingdomscrusade.kingdoms.api.repository
 import net.kingdomscrusade.kingdoms.api.model.PermissionType
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
-import java.util.*
 
 object Roles : Table() {
-    val id = uuid("role_id").clientDefault { UUID.randomUUID() }
+    val id = uuid("role_id")
     val name = varchar("role_name", 255)
     val kingdom = reference(
         "role_kingdom",

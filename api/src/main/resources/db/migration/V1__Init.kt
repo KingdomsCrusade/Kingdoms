@@ -11,7 +11,6 @@ import java.util.*
 class V1__Init : BaseJavaMigration() {
     override fun migrate(context: Context?) {
         transaction {
-            addLogger(StdOutSqlLogger)
             // Create tables
             SchemaUtils.create(Kingdoms, Roles, Permissions, Users)
             // Insert Default Roles
@@ -35,12 +34,12 @@ class V1__Init : BaseJavaMigration() {
 
 // Tables
 object Kingdoms : Table() {
-    val id = uuid("kingdom_id").clientDefault { UUID.randomUUID() }
+    val id = uuid("kingdom_id")
     val name = varchar("kingdom_name", 255).uniqueIndex()
     override val primaryKey = PrimaryKey(id)
 }
 object Roles : Table() {
-    val id = uuid("role_id").clientDefault { UUID.randomUUID() }
+    val id = uuid("role_id")
     val name = varchar("role_name", 255)
     val kingdom = reference( "role_kingdom", Kingdoms.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE ).nullable()
     override val primaryKey = PrimaryKey(id)

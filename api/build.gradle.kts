@@ -10,6 +10,7 @@ version = "0.2.0"
 val mysql   : String by project
 val mariadb : String by project
 val exposed : String by project
+val slf4j   : String by project
 val flyway  : String by project
 val hikari  : String by project
 val kotest  : String by project
@@ -26,6 +27,7 @@ dependencies {
     /* Exposed */   implementation      (group = "org.jetbrains.exposed",   name = "exposed-core",              version = exposed)
                     implementation      (group = "org.jetbrains.exposed",   name = "exposed-dao",               version = exposed)
                     implementation      (group = "org.jetbrains.exposed",   name = "exposed-jdbc",              version = exposed)
+    /* SLF4J */     implementation      (group = "org.slf4j",               name = "slf4j-simple",              version = slf4j)
     /* Flyway */    implementation      (group = "org.flywaydb",            name = "flyway-core",               version = flyway)
     /* Hikari */    implementation      (group = "com.zaxxer",              name = "HikariCP",                  version = hikari)
 

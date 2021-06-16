@@ -3,8 +3,9 @@ package net.kingdomscrusade.kingdoms.api.model
 import java.util.*
 
 data class Kingdom(
-    var id: UUID?,
-    var name: String?,
+    override var id: UUID? = UUID.randomUUID(),
+    override var name: String?,
 ) : ApiModels {
-    constructor(name: String?) : this(id = null, name)
+    constructor(_name: String?) : this(name = _name)
+    constructor() : this(name = null)
 }

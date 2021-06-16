@@ -1,3 +1,8 @@
 package net.kingdomscrusade.kingdoms.api.model
 
-sealed interface ApiModels
+import java.util.*
+
+interface ApiModels {
+    var id : UUID?
+    var name : String?
+}
