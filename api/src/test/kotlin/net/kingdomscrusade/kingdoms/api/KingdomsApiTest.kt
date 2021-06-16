@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import net.kingdomscrusade.kingdoms.api.KingdomsApi as api
 
 @ExperimentalKotest
-class KingdomsAPITest : BehaviorSpec({
+class KingdomsApiTest : BehaviorSpec({
 
     Given("database credentials") {
         val url = Config.url
