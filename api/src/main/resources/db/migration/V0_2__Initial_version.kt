@@ -8,7 +8,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
-class V1__Init : BaseJavaMigration() {
+class V0_2__Initial_version: BaseJavaMigration() {
     override fun migrate(context: Context?) {
         transaction {
             // Create tables

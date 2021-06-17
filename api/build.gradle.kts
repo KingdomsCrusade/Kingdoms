@@ -3,8 +3,8 @@ plugins {
 }
 
 // Package Coordinates //
-group = "net.kingdomscrusade"
-version = "0.2.0"
+val projectGroup : String by project; val projectVersion : String by project
+group =  projectGroup; version = projectVersion
 
 // Module Versions //
 val mysql   : String by project
