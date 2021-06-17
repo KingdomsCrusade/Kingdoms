@@ -5,6 +5,7 @@ import net.kingdomscrusade.kingdoms.api.model.ApiModels
 import net.kingdomscrusade.kingdoms.api.model.Kingdom
 import net.kingdomscrusade.kingdoms.api.model.Role
 import net.kingdomscrusade.kingdoms.api.model.User
+import net.kingdomscrusade.kingdoms.api.service.KingdomsService
 import java.util.*
 
 infix fun KingdomsApi.create (init : CreateStatement.() -> Unit) : CreateStatement =
@@ -32,9 +33,15 @@ class CreateStatement {
     fun execute() : List<UUID> {
         for (model in models)
             when (model) {
-                is Kingdom -> println("Kingdom made") // TODO: 16/6/2021
-                is Role -> println("Role made")
-                is User -> println("User made")
+                is Kingdom -> {
+                    TODO()
+                }
+                is Role -> {
+                    TODO()
+                }
+                is User -> {
+                    TODO()
+                }
             }
         return if (this::queriedIds.isInitialized)
             queriedIds
