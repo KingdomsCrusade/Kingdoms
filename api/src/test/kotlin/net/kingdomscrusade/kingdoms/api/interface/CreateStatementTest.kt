@@ -3,7 +3,7 @@ package net.kingdomscrusade.kingdoms.api.`interface`
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import net.kingdomscrusade.kingdoms.api.Config
-import net.kingdomscrusade.kingdoms.api.model.PermissionType
+import net.kingdomscrusade.kingdoms.api.varclass.PermissionType
 import net.kingdomscrusade.kingdoms.api.KingdomsApi as api
 
 class CreateStatementTest : BehaviorSpec ({

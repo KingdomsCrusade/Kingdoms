@@ -3,7 +3,7 @@ package net.kingdomscrusade.kingdoms.api.table
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 
-object Users : Table() {
+object UsersTable : Table() {
     val uuid = uuid("user_uuid")
 
     val name = varchar(
@@ -13,14 +13,14 @@ object Users : Table() {
 
     val kingdom = reference(
         "user_kingdom",
-        Kingdoms.id,
+        KingdomsTable.id,
         ReferenceOption.CASCADE,
         ReferenceOption.CASCADE
     )
 
     val role = reference(
         "user_role",
-        Roles.id,
+        RolesTable.id,
         onDelete = ReferenceOption.SET_NULL,
         onUpdate = ReferenceOption.CASCADE
     ).nullable()

@@ -1,4 +1,4 @@
-package net.kingdomscrusade.kingdoms.api
+package net.kingdomscrusade.kingdoms.api.varclass
 
 object DefaultUUIDs{
     // UUIDs
