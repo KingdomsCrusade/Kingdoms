@@ -16,27 +16,31 @@ val hikari  : String by project
 val kotest  : String by project
 val mockk   : String by project
 val config  : String by project
+val dagger  : String by project
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    /* MySQL */     implementation      (group = "mysql",                   name = "mysql-connector-java",      version = mysql)
-    /* MariaDB */   implementation      (group = "org.mariadb.jdbc",        name = "mariadb-java-client",       version = mariadb)
-    /* Exposed */   implementation      (group = "org.jetbrains.exposed",   name = "exposed-core",              version = exposed)
-                    implementation      (group = "org.jetbrains.exposed",   name = "exposed-dao",               version = exposed)
-                    implementation      (group = "org.jetbrains.exposed",   name = "exposed-jdbc",              version = exposed)
-    /* SLF4J */     implementation      (group = "org.slf4j",               name = "slf4j-simple",              version = slf4j)
-    /* Flyway */    implementation      (group = "org.flywaydb",            name = "flyway-core",               version = flyway)
-    /* Hikari */    implementation      (group = "com.zaxxer",              name = "HikariCP",                  version = hikari)
+    /* MySQL */     implementation      (group = "mysql",                   name = "mysql-connector-java",      version = mysql     )
+    /* MariaDB */   implementation      (group = "org.mariadb.jdbc",        name = "mariadb-java-client",       version = mariadb   )
+    /* Exposed */   implementation      (group = "org.jetbrains.exposed",   name = "exposed-core",              version = exposed   )
+                    implementation      (group = "org.jetbrains.exposed",   name = "exposed-dao",               version = exposed   )
+                    implementation      (group = "org.jetbrains.exposed",   name = "exposed-jdbc",              version = exposed   )
+    /* SLF4J */     implementation      (group = "org.slf4j",               name = "slf4j-simple",              version = slf4j     )
+    /* Flyway */    implementation      (group = "org.flywaydb",            name = "flyway-core",               version = flyway    )
+    /* Hikari */    implementation      (group = "com.zaxxer",              name = "HikariCP",                  version = hikari    )
+    /* Dagger */    implementation      (group = "com.google.dagger",       name = "dagger",                    version = dagger    )
 
-    /* Kotest */    testImplementation  (group = "io.kotest",               name = "kotest-runner-junit5",      version = kotest)
-                    testImplementation  (group = "io.kotest",               name = "kotest-assertions-core",    version = kotest)
-                    testImplementation  (group = "io.kotest",               name = "kotest-property",           version = kotest)
-                    testImplementation  (group = "io.kotest",               name = "kotest-framework-datatest", version = kotest)
-    /* Mockk */     testImplementation  (group = "io.mockk",                name = "mockk",                     version = mockk)
-    /* Config */    testImplementation  (group = "com.typesafe",            name = "config",                    version = config)
+    /* Kotest */    testImplementation  (group = "io.kotest",               name = "kotest-runner-junit5",      version = kotest    )
+                    testImplementation  (group = "io.kotest",               name = "kotest-assertions-core",    version = kotest    )
+                    testImplementation  (group = "io.kotest",               name = "kotest-property",           version = kotest    )
+                    testImplementation  (group = "io.kotest",               name = "kotest-framework-datatest", version = kotest    )
+    /* Mockk */     testImplementation  (group = "io.mockk",                name = "mockk",                     version = mockk     )
+    /* Config */    testImplementation  (group = "com.typesafe",            name = "config",                    version = config    )
+
+    /* Dagger */    annotationProcessor (group = "com.google.dagger",       name = "dagger-compiler",           version = dagger    )
 }
 
 tasks.test {
