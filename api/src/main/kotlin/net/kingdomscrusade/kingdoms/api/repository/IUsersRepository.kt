@@ -12,19 +12,18 @@ interface IUsersRepository {
 
     fun updateById (
         _targetId : UUID,
+        _targetUserKingdom : UUID,
         _name: String?,
-        _kingdom: UUID?,
         _role: UUID?
     )
     fun updateByName (
         _targetName : String,
         _targetUserKingdom : UUID,
         _name: String?,
-        _kingdom: UUID?,
         _role: UUID?
     )
 
-    fun deleteById (_id: UUID)
+    fun deleteById (_id: UUID, _kingdom: UUID)
     fun deleteByName (_name: String, _kingdom: UUID)
 
 }

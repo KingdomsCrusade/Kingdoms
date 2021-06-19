@@ -1,7 +1,7 @@
-@file:Suppress("unused", "MemberVisibilityCanBePrivate")
-
 package net.kingdomscrusade.kingdoms.api.repository
 
+import dagger.Provides
+import net.kingdomscrusade.kingdoms.api.miscellaneous.Provider
 import net.kingdomscrusade.kingdoms.api.model.Kingdom
 import net.kingdomscrusade.kingdoms.api.table.KingdomsTable
 import org.jetbrains.exposed.sql.deleteWhere
@@ -12,6 +12,12 @@ import org.jetbrains.exposed.sql.update
 import java.util.*
 
 class KingdomsRepository : IKingdomsRepository {
+
+    companion object : Provider<IKingdomsRepository> {
+        @Provides
+        override fun provide() : IKingdomsRepository = KingdomsRepository()
+    }
+
     override fun create(_id: UUID, _name: String) {
         transaction {
             KingdomsTable.insert {

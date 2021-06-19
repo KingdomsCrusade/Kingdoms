@@ -1,7 +1,7 @@
-@file:Suppress("unused", "MemberVisibilityCanBePrivate")
-
 package net.kingdomscrusade.kingdoms.api.repository
 
+import dagger.Provides
+import net.kingdomscrusade.kingdoms.api.miscellaneous.Provider
 import net.kingdomscrusade.kingdoms.api.model.Role
 import net.kingdomscrusade.kingdoms.api.table.PermissionsTable
 import net.kingdomscrusade.kingdoms.api.table.RolesTable
@@ -11,6 +11,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
 
 class RolesRepository : IRolesRepository {
+
+    companion object : Provider<IRolesRepository> {
+        @Provides
+        override fun provide() : IRolesRepository = RolesRepository()
+    }
+
     override fun create(_id: UUID, _name: String, _permissions: Set<PermissionType>, _kingdom: UUID?) {
         transaction {
             RolesTable.insert {
@@ -90,9 +96,11 @@ class RolesRepository : IRolesRepository {
 
     override fun deleteById(_id: UUID) {
         transaction { RolesTable.deleteWhere { RolesTable.id eq _id } }
+        // Rows referencing the role in Permissions table will cascade on delete
     }
 
     override fun deleteByName(_name: String, _kingdom: UUID?) {
         transaction { RolesTable.deleteWhere { ( RolesTable.name eq _name ) and ( RolesTable.kingdom eq _kingdom ) } }
+        // Rows referencing the role in Permissions table will cascade on delete
     }
 }
