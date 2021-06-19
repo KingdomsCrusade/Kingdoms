@@ -5,10 +5,10 @@ import java.util.*
 data class User(
     override var id : UUID?,
     override var name: String?,
-    var kingdomId: UUID?,
-    var roleId: UUID?,
+    var kingdom: UUID?,
+    var role: UUID?,
 ) : ApiModels {
-    constructor(id: UUID) : this(id = id, name = null, kingdomId = null, roleId = null)
+//    constructor(id: UUID) : this(id = id, name = null, kingdom = null, role = null)
     constructor() : this(null, null, null, null)
 }
 

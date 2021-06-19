@@ -50,11 +50,11 @@ object Permissions : Table() {
     val value = customEnumeration( "permission_val", "ENUM(${allPermissions()})", { value -> PermissionType.valueOf(value as String) }, { it.name } )
 }
 object Users : Table() {
-    val uuid = uuid("user_uuid")
+    val id = uuid("user_id")
     val name = varchar( "user_name", 16 ).uniqueIndex()
     val kingdom = reference( "user_kingdom", Kingdoms.id, ReferenceOption.CASCADE, ReferenceOption.CASCADE )
     val role = reference( "user_role", Roles.id, onDelete = ReferenceOption.SET_NULL, onUpdate = ReferenceOption.CASCADE ).nullable()
-    override val primaryKey = PrimaryKey(uuid)
+    override val primaryKey = PrimaryKey(id)
 }
 enum class PermissionType {
     ADMIN,

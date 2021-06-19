@@ -1,18 +1,30 @@
 package net.kingdomscrusade.kingdoms.api.repository
 
+import net.kingdomscrusade.kingdoms.api.model.User
 import java.util.*
 
 interface IUsersRepository {
 
-    fun create (uuid : UUID, name : String, kingdom : UUID, role : UUID?)
+    fun create (_id : UUID, _name : String, _kingdom : UUID, _role : UUID?)
 
-    fun readById (uuid: UUID)
-    fun readByName (name: String, kingdom: UUID)
+    fun readById (_id: UUID) : List<User>
+    fun readByName (_name: String, _kingdom: UUID) : List<User>
 
-    fun updateById (targetUUID : UUID, name: String?, kingdom: UUID?, role: UUID?)
-    fun updateByName (targetName : String, targetUserKingdom : UUID, name: String?, kingdom: UUID?, role: UUID?)
+    fun updateById (
+        _targetId : UUID,
+        _name: String?,
+        _kingdom: UUID?,
+        _role: UUID?
+    )
+    fun updateByName (
+        _targetName : String,
+        _targetUserKingdom : UUID,
+        _name: String?,
+        _kingdom: UUID?,
+        _role: UUID?
+    )
 
-    fun deleteById (uuid: UUID)
-    fun deleteByName (name: String, kingdom: UUID)
+    fun deleteById (_id: UUID)
+    fun deleteByName (_name: String, _kingdom: UUID)
 
 }

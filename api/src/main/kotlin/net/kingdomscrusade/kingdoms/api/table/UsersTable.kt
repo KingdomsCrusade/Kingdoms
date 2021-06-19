@@ -4,7 +4,7 @@ import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
 
 object UsersTable : Table() {
-    val uuid = uuid("user_uuid")
+    val id = uuid("user_id")
 
     val name = varchar(
         "user_name",
@@ -25,5 +25,5 @@ object UsersTable : Table() {
         onUpdate = ReferenceOption.CASCADE
     ).nullable()
 
-    override val primaryKey = PrimaryKey(uuid)
+    override val primaryKey = PrimaryKey(id)
 }

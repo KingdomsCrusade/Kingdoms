@@ -5,7 +5,6 @@ import net.kingdomscrusade.kingdoms.api.model.ApiModels
 import net.kingdomscrusade.kingdoms.api.model.Kingdom
 import net.kingdomscrusade.kingdoms.api.model.Role
 import net.kingdomscrusade.kingdoms.api.model.User
-import net.kingdomscrusade.kingdoms.api.service.KingdomsService
 import java.util.*
 
 infix fun KingdomsApi.create (init : CreateStatement.() -> Unit) : CreateStatement =

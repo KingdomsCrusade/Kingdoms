@@ -6,6 +6,6 @@ data class Kingdom(
     override var id: UUID? = UUID.randomUUID(),
     override var name: String?,
 ) : ApiModels {
-    constructor(_name: String?) : this(name = _name)
+//    constructor(_name: String?) : this(name = _name)
     constructor() : this(name = null)
 }

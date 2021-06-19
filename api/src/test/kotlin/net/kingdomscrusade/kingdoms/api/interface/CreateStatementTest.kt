@@ -18,8 +18,8 @@ class CreateStatementTest : BehaviorSpec ({
                 }.getId()
                 role {
                     name = "PogChampion"
-                    kingdomId = kingdom
-                    permissions = setOf(PermissionType.INTERACT)
+                    this.kingdom = kingdom
+                    permissions = mutableSetOf(PermissionType.INTERACT)
                 }
             }
 
