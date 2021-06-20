@@ -8,6 +8,9 @@ data class User(
     var kingdom: UUID?,
     var role: UUID?,
 ) : ApiModels {
-    constructor() : this(null, null, null, null)
+    constructor(id: UUID, kingdom: UUID) : this(id = id, name = null, kingdom = kingdom, role = null)
+
+    // Couldn't add name & kingdom focused constructor due to conflicting overload
+    constructor(name: String?, role: UUID?) : this(id = null, name = name, kingdom = null, role = role)
 }
 
