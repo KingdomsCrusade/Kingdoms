@@ -5,20 +5,21 @@ import java.util.*
 
 interface IUsersRepository {
 
-    fun create (_id : UUID, _name : String, _kingdom : UUID, _role : UUID?)
+    fun create(_id: UUID, _name: String, _kingdom: UUID, _role: UUID?)
 
-    fun readById (_id: UUID) : List<User>
-    fun readByName (_name: String, _kingdom: UUID) : List<User>
+    fun readById(_id: UUID, _kingdom: UUID): List<User>
+    fun readByName(_name: String, _kingdom: UUID): List<User>
 
-    fun updateById (
-        _targetId : UUID,
-        _targetUserKingdom : UUID,
+    fun updateById(
+        _targetId: UUID,
+        _targetUserKingdom: UUID,
         _name: String?,
         _role: UUID?
     )
-    fun updateByName (
-        _targetName : String,
-        _targetUserKingdom : UUID,
+
+    fun updateByName(
+        _targetName: String,
+        _targetUserKingdom: UUID,
         _name: String?,
         _role: UUID?
     )

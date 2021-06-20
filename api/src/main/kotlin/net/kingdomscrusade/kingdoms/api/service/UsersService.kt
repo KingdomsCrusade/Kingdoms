@@ -38,8 +38,8 @@ class UsersService : IUsersService{
         repository.create(_id, _name, _kingdom, _role)
     }
 
-    override fun readById(_id: UUID): List<User> =
-        repository.readById(_id)
+    override fun readById(_id: UUID, _kingdom: UUID): List<User> =
+        repository.readById(_id, _kingdom)
 
     override fun readByName(_name: String, _kingdom: UUID): List<User> =
         repository.readByName(_name, _kingdom)

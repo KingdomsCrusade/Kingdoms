@@ -26,9 +26,9 @@ class UsersRepository : IUsersRepository {
         }
     }
 
-    override fun readById(_id: UUID): List<User> = transaction {
+    override fun readById(_id: UUID, _kingdom: UUID): List<User> = transaction {
         UsersTable
-            .select { UsersTable.id eq _id }
+            .select { (UsersTable.id eq _id) and (UsersTable.kingdom eq _kingdom) }
             .map {
                 User(
                     id = it[UsersTable.id],

@@ -8,7 +8,6 @@ data class User(
     var kingdom: UUID?,
     var role: UUID?,
 ) : ApiModels {
-//    constructor(id: UUID) : this(id = id, name = null, kingdom = null, role = null)
     constructor() : this(null, null, null, null)
 }
 

@@ -10,7 +10,6 @@ data class Role(
     var permissions: MutableSet<PermissionType>?,
     var kingdom: UUID?,
 ) : ApiModels {
-//    constructor(name: String?, kingdomId: UUID?) : this(name = name, permissions = null, kingdom = kingdomId)
     constructor() : this(name = null, permissions = null, kingdom = null)
 }
 
