@@ -1,8 +1,9 @@
-package net.kingdomscrusade.kingdoms.api.`interface`
+package net.kingdomscrusade.kingdoms.api.entrypoint
 
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import net.kingdomscrusade.kingdoms.api.Config
+import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.create
 import net.kingdomscrusade.kingdoms.api.varclass.PermissionType
 import net.kingdomscrusade.kingdoms.api.KingdomsApi as api
 
@@ -11,7 +12,7 @@ class CreateStatementTest : BehaviorSpec ({
         api.connect(Config.url, Config.usr, Config.pwd)
 
         When("`create` function is called with some data objects") {
-            val statement = api.get() create {
+            val statement = api.get().create {
                 val kingdom = kingdom {
                     // Id is auto generated
                     name = "Midgard"

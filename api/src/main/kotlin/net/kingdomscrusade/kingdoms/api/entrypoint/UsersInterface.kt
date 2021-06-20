@@ -1,7 +1,8 @@
-package net.kingdomscrusade.kingdoms.api.`interface`
+package net.kingdomscrusade.kingdoms.api.entrypoint
 
+import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.CreateStatement
+import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.CreateStatement.AddedModel
 import net.kingdomscrusade.kingdoms.api.model.User
-import net.kingdomscrusade.kingdoms.api.`interface`.CreateStatement.AddedModel
 
 fun CreateStatement.user (values : User.() -> Unit) : AddedModel =
     User().let {
