@@ -1,6 +1,5 @@
 package net.kingdomscrusade.kingdoms.api.entrypoint.dsl
 
-import net.kingdomscrusade.kingdoms.api.KingdomsApi
 import net.kingdomscrusade.kingdoms.api.model.ApiModels
 import net.kingdomscrusade.kingdoms.api.model.Kingdom
 import net.kingdomscrusade.kingdoms.api.model.Role
@@ -10,13 +9,6 @@ import net.kingdomscrusade.kingdoms.api.service.IRolesService
 import net.kingdomscrusade.kingdoms.api.service.IUsersService
 import java.util.*
 import javax.inject.Inject
-
-@Suppress("unused") // Because it's required to have database initialized & connected for this to work
-fun KingdomsApi.create(init: CreateStatement.() -> Unit): List<UUID> =
-    CreateStatement().let {
-        it.init()
-        it.execute()
-    }
 
 class CreateStatement {
 

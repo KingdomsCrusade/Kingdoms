@@ -2,28 +2,64 @@ package net.kingdomscrusade.kingdoms.api
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import net.kingdomscrusade.kingdoms.api.KingdomsApiManager as manager
+import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.CreateStatement
+import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.DeleteStatement
+import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.ReadStatement
+import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.UpdateStatement
+import net.kingdomscrusade.kingdoms.api.model.ApiModels
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
+import java.sql.Connection
+import java.util.*
 
-class KingdomsApi private constructor() {
+class KingdomsApi private constructor(private val dataSource: HikariDataSource) {
+
     companion object {
-        fun connect(url: String, usr: String?, pwd: String?) {
-            HikariDataSource(
-                HikariConfig().apply {
-                    jdbcUrl = url
-                    username = usr
-                    password = pwd
+        fun connect(url: String, usr: String?, pwd: String?): KingdomsApi {
+            val dataSource =
+                HikariDataSource(
+                    HikariConfig().apply {
+                        jdbcUrl = url
+                        username = usr
+                        password = pwd
+                    }
+                ).also {
+                    Database.connect(it)
+                    Flyway.configure()
+                        .dataSource(it).load()
+                        .migrate()
                 }
-            ).let {
-                Database.connect(it)
-                Flyway.configure()
-                    .dataSource(it).load()
-                    .migrate()
-                manager.set(KingdomsApi())
-            }
+            return KingdomsApi(dataSource)
         }
-        fun get() = manager.get()
     }
+
+    // Datasource
+    fun isConnected(): Boolean = dataSource.isRunning
+    fun getConnectionObject(): Connection = dataSource.connection
+
+    // CRUDs
+    fun create(init: CreateStatement.() -> Unit): List<UUID> =
+        CreateStatement().let {
+            it.init()
+            it.execute()
+        }
+
+    fun read(init: ReadStatement.() -> Unit): List<ApiModels> =
+        ReadStatement().let {
+            it.init()
+            it.execute()
+        }
+
+    fun update(init: UpdateStatement.() -> Unit) =
+        UpdateStatement().let {
+            it.init()
+            it.execute()
+        }
+
+    fun delete(init: DeleteStatement.() -> Unit) =
+        DeleteStatement().let {
+            it.init()
+            it.execute()
+        }
 }
 

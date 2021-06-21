@@ -1,6 +1,5 @@
 package net.kingdomscrusade.kingdoms.api.entrypoint.dsl
 
-import net.kingdomscrusade.kingdoms.api.KingdomsApi
 import net.kingdomscrusade.kingdoms.api.model.ApiModels
 import net.kingdomscrusade.kingdoms.api.model.Kingdom
 import net.kingdomscrusade.kingdoms.api.model.Role
@@ -9,14 +8,6 @@ import net.kingdomscrusade.kingdoms.api.service.IKingdomsService
 import net.kingdomscrusade.kingdoms.api.service.IRolesService
 import net.kingdomscrusade.kingdoms.api.service.IUsersService
 import javax.inject.Inject
-
-@Suppress("unused") // Because it's required to have database initialized & connected for this to work
-fun KingdomsApi.delete(init: DeleteStatement.() -> Unit) =
-    DeleteStatement().let {
-        it.init()
-        it.execute()
-    }
-
 
 class DeleteStatement {
 

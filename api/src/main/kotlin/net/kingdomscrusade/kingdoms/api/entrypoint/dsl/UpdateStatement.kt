@@ -1,6 +1,5 @@
 package net.kingdomscrusade.kingdoms.api.entrypoint.dsl
 
-import net.kingdomscrusade.kingdoms.api.KingdomsApi
 import net.kingdomscrusade.kingdoms.api.model.ApiModels
 import net.kingdomscrusade.kingdoms.api.model.Kingdom
 import net.kingdomscrusade.kingdoms.api.model.Role
@@ -10,14 +9,8 @@ import net.kingdomscrusade.kingdoms.api.service.IRolesService
 import net.kingdomscrusade.kingdoms.api.service.IUsersService
 import javax.inject.Inject
 
-@Suppress("unused") // Because it's required to have database initialized & connected for this to work
-fun KingdomsApi.update(init: UpdateStatement.() -> Unit) =
-    UpdateStatement().let {
-        it.init()
-        it.execute()
-    }
-
 class UpdateStatement {
+
     // Injections
     @Inject
     lateinit var kingdomsService: Lazy<IKingdomsService>
