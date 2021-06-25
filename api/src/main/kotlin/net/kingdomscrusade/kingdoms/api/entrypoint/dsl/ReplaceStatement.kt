@@ -7,15 +7,17 @@ import net.kingdomscrusade.kingdoms.api.service.IRolesService
 import net.kingdomscrusade.kingdoms.api.service.IUsersService
 import javax.inject.Inject
 
-class ReadStatement {
+class ReplaceStatement {
 
     // Injections
     @Inject lateinit var kingdomsService: Lazy<IKingdomsService>
     @Inject lateinit var usersService: Lazy<IUsersService>
     @Inject lateinit var rolesService: Lazy<IRolesService>
 
-    private val targets: MutableList<ApiTarget> = mutableListOf()
-    operator fun ApiTarget.not() { TODO() }
+    private val map: MutableMap<ApiTarget, ApiModel> = mutableMapOf()
+    @Suppress("UNUSED_PARAMETER")
+    operator fun ApiTarget.compareTo(it: ApiModel): Int { TODO() }
 
-    fun execute(): List<ApiModel> { TODO() }
+    fun execute() { TODO() }
+
 }

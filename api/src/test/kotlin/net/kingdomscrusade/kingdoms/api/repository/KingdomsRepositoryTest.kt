@@ -7,7 +7,7 @@ import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.collections.shouldNotContain
 import io.kotest.matchers.shouldBe
-import net.kingdomscrusade.kingdoms.api.model.Kingdom
+import net.kingdomscrusade.kingdoms.api.model.KingdomModel
 import net.kingdomscrusade.kingdoms.api.util.TestUtil.api
 import net.kingdomscrusade.kingdoms.api.util.TestUtil.injectInit
 import net.kingdomscrusade.kingdoms.api.util.toStringWithoutDashes
@@ -21,18 +21,18 @@ class KingdomsRepositoryTest : FunSpec({
     test("create") {
 
         // Given a kingdom's credentials
-        val info = Kingdom(name = "Kingdom of Windmire")
+        val info = KingdomModel(name = "Kingdom of Windmire")
         println("Generated object: $info")
 
         // When function `create` is called
-        KingdomsRepository().create(info.id!!, info.name!!)
+        KingdomsRepository().create(info)
 
         // Then function should add a new role with the corresponding credentials given
-        val list = mutableListOf<Kingdom>()
+        val list = mutableListOf<KingdomModel>()
         api.getConnectionObject().createStatement().run {
             executeQuery("SELECT kingdom_id, kingdom_name FROM Kingdoms").run {
                 while (next())
-                    list += Kingdom(
+                    list += KingdomModel(
                         id = getBytes("kingdom_id").toUUID(),
                         name = getString("kingdom_name")
                     )
@@ -49,7 +49,7 @@ class KingdomsRepositoryTest : FunSpec({
         test("with existing object id as parameter") {
 
             // Given that a kingdom object has been inserted to table
-            val obj = Kingdom( name = "Pickleland" )
+            val obj = KingdomModel( name = "Pickleland" )
             println("Generated object: $obj")
             api.getConnectionObject().createStatement().run {
                 executeUpdate(
@@ -63,7 +63,7 @@ class KingdomsRepositoryTest : FunSpec({
             }
 
             // When someone is querying with a UUID that exists, for example the object we just created
-            val result = KingdomsRepository().readById(obj.id!!)
+            val result = KingdomsRepository().readById(obj.id)
             println("Queried object: $result")
 
             // Then the result (it's a list of object) of it should contain the kingdom object
@@ -74,11 +74,11 @@ class KingdomsRepositoryTest : FunSpec({
          test("with object id that does not exists as parameter") {
 
              // Given a random, non-exist kingdom object, Let's say... Kingdom of Stardrop?
-             val obj = Kingdom(name = "Kingdom of Stardrop")
+             val obj = KingdomModel(name = "Kingdom of Stardrop")
              println("Generated object: $obj")
 
              // When someone is querying with a UUID that does not exist, like the object we just created
-             val result = KingdomsRepository().readById(obj.id!!)
+             val result = KingdomsRepository().readById(obj.id)
              println("Queried object: $result")
 
              // Then the result of it should not contain the object
@@ -93,7 +93,7 @@ class KingdomsRepositoryTest : FunSpec({
         test("existing object id as parameter") {
 
             // Given that a kingdom object has been inserted to table
-            val obj = Kingdom(name = "Midgard")
+            val obj = KingdomModel(name = "Midgard")
             println("Generated object: $obj")
             api.getConnectionObject().createStatement().run {
                 executeUpdate(
@@ -107,7 +107,7 @@ class KingdomsRepositoryTest : FunSpec({
             }
 
             // When user is querying with an object name that exists, for example, the object that we just created
-            val result = KingdomsRepository().readByName(obj.name!!)
+            val result = KingdomsRepository().readByName(obj.name)
             println("Queried object: $result")
 
             // Then the result should contain the object we just created
@@ -118,11 +118,11 @@ class KingdomsRepositoryTest : FunSpec({
         test("with non-existing object name as parameter") {
 
             // Given a random, non-existing kingdom object
-            val obj = Kingdom(name = "SanDisk")
+            val obj = KingdomModel(name = "SanDisk")
             println("Generated object: $obj")
 
             // When someone is querying with this object's name
-            val result = KingdomsRepository().readByName(obj.name!!)
+            val result = KingdomsRepository().readByName(obj.name)
             println("Queried object: $result")
 
             // Then it should not contain the object we just generated
@@ -136,7 +136,7 @@ class KingdomsRepositoryTest : FunSpec({
 
         test("updating existing object") {
             // Given a kingdom object has been inserted to table
-            val obj = Kingdom(name = "Redhat")
+            val obj = KingdomModel(name = "Redhat")
             println("Generated object: $obj")
             api.getConnectionObject().createStatement().run {
                 executeUpdate(
@@ -151,19 +151,20 @@ class KingdomsRepositoryTest : FunSpec({
 
             // When user is updating a kingdom object's name to Peneng targeting an existing object, like the one we just inserted
             val newName = "Peneng"
-            KingdomsRepository().updateById(obj.id!!, newName)
+            // TODO: 25/6/2021
+//            KingdomsRepository().replaceById(obj.id,)
 
             // Then the object in table should have the new name
-            val expected = Kingdom(obj.id!!, newName)
+            val expected = KingdomModel(obj.id, newName)
             val queried = api.getConnectionObject().createStatement().run {
                 executeQuery(
                     """
                         SELECT * FROM Kingdoms
                     """.trimIndent()
                 ).run {
-                    mutableListOf<Kingdom>().apply {
+                    mutableListOf<KingdomModel>().apply {
                         while (next())
-                            this += Kingdom(
+                            this += KingdomModel(
                                 id = getBytes("kingdom_id").toUUID(),
                                 name = getString("kingdom_name")
                             )
@@ -177,7 +178,8 @@ class KingdomsRepositoryTest : FunSpec({
         xtest("updating non-existing object") {
             // TODO Element not found error
             shouldThrow<NoSuchElementException> {
-                KingdomsRepository().updateById(UUID.randomUUID(), "TheAlienKingdom")
+                // TODO: 25/6/2021
+//                KingdomsRepository().replaceById(UUID.randomUUID(),)
             }
         }
     }
@@ -185,7 +187,7 @@ class KingdomsRepositoryTest : FunSpec({
     context("updateByName") {
         test("update existing object") {
             // Given a kingdom object has been inserted to table
-            val obj = Kingdom(name = "Redhat")
+            val obj = KingdomModel(name = "Redhat")
             println("Generated object: $obj")
             api.getConnectionObject().createStatement().run {
                 executeUpdate(
@@ -200,19 +202,20 @@ class KingdomsRepositoryTest : FunSpec({
 
             // When user is updating a kingdom object's name to Peneng targeting an existing object, like the one we just inserted
             val newName = "Peneng"
-            KingdomsRepository().updateByName(obj.name!!, newName)
+            // TODO: 25/6/2021
+//            KingdomsRepository().replaceByName(obj.name,)
 
             // Then the object in table should have the new name
-            val expected = Kingdom(obj.id!!, newName)
+            val expected = KingdomModel(obj.id, newName)
             val queried = api.getConnectionObject().createStatement().run {
                 executeQuery(
                     """
                         SELECT * FROM Kingdoms
                     """.trimIndent()
                 ).run {
-                    mutableListOf<Kingdom>().apply {
+                    mutableListOf<KingdomModel>().apply {
                         while (next())
-                            this += Kingdom(
+                            this += KingdomModel(
                                 id = getBytes("kingdom_id").toUUID(),
                                 name = getString("kingdom_name")
                             )
@@ -225,7 +228,8 @@ class KingdomsRepositoryTest : FunSpec({
         xtest("update non-existing object") {
             // TODO Element not found error
             shouldThrow<NoSuchElementException> {
-                KingdomsRepository().updateByName("Logitech", "TheAlienKingdom")
+                // TODO: 25/6/2021
+//                KingdomsRepository().replaceByName("Logitech",)
             }
         }
     }
@@ -233,7 +237,7 @@ class KingdomsRepositoryTest : FunSpec({
     context("deleteById") {
         test("delete existing object") {
             // Given a kingdom object has been inserted to table
-            val obj = Kingdom(name = "Redhat")
+            val obj = KingdomModel(name = "Redhat")
             println("Generated object: $obj")
             api.getConnectionObject().createStatement().run {
                 executeUpdate(
@@ -247,7 +251,7 @@ class KingdomsRepositoryTest : FunSpec({
             }
 
             // When user is updating a kingdom object's name to Peneng targeting an existing object, like the one we just inserted
-            KingdomsRepository().deleteById(obj.id!!)
+            KingdomsRepository().deleteById(obj.id)
 
             // Then the object in table should have the new name
             val queried = api.getConnectionObject().createStatement().run {
@@ -256,9 +260,9 @@ class KingdomsRepositoryTest : FunSpec({
                         SELECT * FROM Kingdoms
                     """.trimIndent()
                 ).run {
-                    mutableListOf<Kingdom>().apply {
+                    mutableListOf<KingdomModel>().apply {
                         while (next())
-                            this += Kingdom(
+                            this += KingdomModel(
                                 id = getBytes("kingdom_id").toUUID(),
                                 name = getString("kingdom_name")
                             )
@@ -279,7 +283,7 @@ class KingdomsRepositoryTest : FunSpec({
     context("deleteByName") {
         test("delete existing object") {
             // Given a kingdom object has been inserted to table
-            val obj = Kingdom(name = "Redhat")
+            val obj = KingdomModel(name = "Redhat")
             println("Generated object: $obj")
             api.getConnectionObject().createStatement().run {
                 executeUpdate(
@@ -293,7 +297,7 @@ class KingdomsRepositoryTest : FunSpec({
             }
 
             // When user is updating a kingdom object's name to Peneng targeting an existing object, like the one we just inserted
-            KingdomsRepository().deleteByName(obj.name!!)
+            KingdomsRepository().deleteByName(obj.name)
 
             // Then the object in table should have the new name
             val queried = api.getConnectionObject().createStatement().run {
@@ -302,9 +306,9 @@ class KingdomsRepositoryTest : FunSpec({
                         SELECT * FROM Kingdoms
                     """.trimIndent()
                 ).run {
-                    mutableListOf<Kingdom>().apply {
+                    mutableListOf<KingdomModel>().apply {
                         while (next())
-                            this += Kingdom(
+                            this += KingdomModel(
                                 id = getBytes("kingdom_id").toUUID(),
                                 name = getString("kingdom_name")
                             )

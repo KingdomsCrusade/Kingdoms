@@ -2,10 +2,9 @@ package net.kingdomscrusade.kingdoms.api.service
 
 import dagger.Provides
 import net.kingdomscrusade.kingdoms.api.miscellaneous.Provider
-import net.kingdomscrusade.kingdoms.api.model.Role
+import net.kingdomscrusade.kingdoms.api.model.RoleModel
 import net.kingdomscrusade.kingdoms.api.repository.IRolesRepository
 import net.kingdomscrusade.kingdoms.api.table.RolesTable
-import net.kingdomscrusade.kingdoms.api.varclass.PermissionType
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.*
@@ -33,36 +32,22 @@ class RolesService : IRolesService{
         }
     }
 
-    override fun create(_id: UUID, _name: String, _permissions: Set<PermissionType>, _kingdom: UUID?) {
-        // Role name duplication check
-        if (nameDupe(_name, _kingdom)) throw IllegalStateException("Role with the same name under the kingdom exists")
-
-        repository.create(_id, _name, _permissions, _kingdom)
+    override fun create(_obj: RoleModel) {
+        TODO("Not yet implemented")
     }
 
-    override fun readById(_id: UUID): List<Role> =
+    override fun readById(_id: UUID): List<RoleModel> =
         repository.readById(_id)
 
-    override fun readByName(_name: String, _kingdom: UUID?): List<Role> =
+    override fun readByName(_name: String, _kingdom: UUID?): List<RoleModel> =
         repository.readByName(_name, _kingdom)
-    override fun updateById(_targetId: UUID, _name: String?, _permissions: Set<PermissionType>?, _kingdom: UUID?) {
-        // Role name duplication check
-        if (nameDupe(_name, _kingdom)) throw IllegalStateException("Role with the same name under the kingdom exists")
 
-        repository.updateById(_targetId, _name, _permissions, _kingdom)
+    override fun replaceById(_targetId: UUID, _obj: RoleModel) {
+        TODO("Not yet implemented")
     }
 
-    override fun updateByName(
-        _targetName: String,
-        _targetRoleKingdom: UUID?,
-        _name: String?,
-        _permissions: Set<PermissionType>?,
-        _kingdom: UUID?
-    ) {
-        // Role name duplication check
-        if (nameDupe(_name, _kingdom)) throw IllegalStateException("Role with the same name under the kingdom exists")
-
-        repository.updateByName(_targetName, _targetRoleKingdom, _name, _permissions, _kingdom)
+    override fun replaceByName(_targetName: String, _targetRoleKingdom: UUID?, _obj: RoleModel) {
+        TODO("Not yet implemented")
     }
 
     override fun deleteById(_id: UUID) =

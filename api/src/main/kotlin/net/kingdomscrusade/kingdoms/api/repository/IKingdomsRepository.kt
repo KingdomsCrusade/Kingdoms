@@ -1,17 +1,17 @@
 package net.kingdomscrusade.kingdoms.api.repository
 
-import net.kingdomscrusade.kingdoms.api.model.Kingdom
+import net.kingdomscrusade.kingdoms.api.model.KingdomModel
 import java.util.*
 
 interface IKingdomsRepository {
 
-    fun create (_id : UUID, _name : String)
+    fun create (_obj : KingdomModel)
 
-    fun readById (_id: UUID) : List<Kingdom>
-    fun readByName (_name : String) : List<Kingdom>
+    fun readById (_id: UUID) : List<KingdomModel>
+    fun readByName (_name : String) : List<KingdomModel>
 
-    fun updateById (_targetId : UUID, _name: String?)
-    fun updateByName (_targetName : String, _name: String?)
+    fun replaceById(_targetId: UUID, _obj: KingdomModel)
+    fun replaceByName(_targetName: String, _obj: KingdomModel)
 
     fun deleteById (_id: UUID)
     fun deleteByName (_name: String)

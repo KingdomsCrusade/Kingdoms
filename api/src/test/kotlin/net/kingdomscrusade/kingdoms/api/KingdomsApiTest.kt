@@ -19,9 +19,11 @@ class KingdomsApiTest : BehaviorSpec({
         val url = Config.url
         val usr = Config.usr
         val pwd = Config.pwd
+
         When("KingdomsAPI.connect is called") {
             api.connect(url, usr, pwd)
             TestUtil.lock(specInstance.javaClass.kotlin)
+
             Then("system should perform database migration") {
                 val tableList: MutableList<String> = mutableListOf()
                 TestUtil.api.getConnectionObject().createStatement().run {
@@ -34,21 +36,11 @@ class KingdomsApiTest : BehaviorSpec({
 
                 tableList.shouldContainAll("Kingdoms", "Users", "Roles", "Permissions")
             }
-            xThen ("user should be able to execute CRUD operations"){
-                context("create") { TODO() }
-                context("read") { TODO() }
-                context("update") { TODO() }
-                context("delete") { TODO() }
-            }
+
+            xThen ("user should be able to execute CRUD operations"){ TODO() }
+
         }
-        xWhen("KingdomAPI.connect is not called") {
-            Then ("user should not be able to execute CRUD operations"){
-                context("create") { TODO() }
-                context("read") { TODO() }
-                context("update") { TODO() }
-                context("delete") { TODO() }
-            }
-        }
+
     }
 
 })

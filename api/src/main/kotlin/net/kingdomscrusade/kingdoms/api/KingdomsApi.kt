@@ -5,8 +5,8 @@ import com.zaxxer.hikari.HikariDataSource
 import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.CreateStatement
 import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.DeleteStatement
 import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.ReadStatement
-import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.UpdateStatement
-import net.kingdomscrusade.kingdoms.api.model.ApiModels
+import net.kingdomscrusade.kingdoms.api.entrypoint.dsl.ReplaceStatement
+import net.kingdomscrusade.kingdoms.api.model.ApiModel
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import java.sql.Connection
@@ -55,14 +55,14 @@ class KingdomsApi private constructor(private val dataSource: HikariDataSource) 
             it.execute()
         }
 
-    fun read(init: ReadStatement.() -> Unit): List<ApiModels> =
+    fun read(init: ReadStatement.() -> Unit): List<ApiModel> =
         ReadStatement().let {
             it.init()
             it.execute()
         }
 
-    fun update(init: UpdateStatement.() -> Unit) =
-        UpdateStatement().let {
+    fun replace(init: ReplaceStatement.() -> Unit) =
+        ReplaceStatement().let {
             it.init()
             it.execute()
         }
