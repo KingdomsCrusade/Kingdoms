@@ -7,5 +7,5 @@ data class Kingdom(
     override var name: String?,
 ) : ApiModels {
     constructor(id: UUID) : this(id, name = null)
-    constructor(name: String) : this(id = null, name = name)
+//    constructor(name: String) : this(id = null, name = name) // Disabled due to constructor conflicts
 }

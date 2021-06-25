@@ -31,6 +31,17 @@ class KingdomsApi private constructor(private val dataSource: HikariDataSource) 
                 }
             return KingdomsApi(dataSource)
         }
+        fun connectWithoutMigrate (url : String, usr: String?, pwd: String?): KingdomsApi {
+            val dataSource =
+                HikariDataSource(
+                    HikariConfig().apply {
+                        jdbcUrl = url
+                        username = usr
+                        password = pwd
+                    }
+                ).also { Database.connect(it) }
+            return KingdomsApi(dataSource)
+        }
     }
 
     // Datasource
