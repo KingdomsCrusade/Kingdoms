@@ -13,3 +13,6 @@ fun UUID.toByteArray() : ByteArray =
         putLong(mostSignificantBits)
         putLong(leastSignificantBits)
     }.array()
+
+fun UUID?.toStringWithoutDashes() : String =
+    this.toString().replace("-", "")

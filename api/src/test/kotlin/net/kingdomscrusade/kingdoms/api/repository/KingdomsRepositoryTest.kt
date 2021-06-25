@@ -10,6 +10,7 @@ import io.kotest.matchers.shouldBe
 import net.kingdomscrusade.kingdoms.api.model.Kingdom
 import net.kingdomscrusade.kingdoms.api.util.TestUtil.api
 import net.kingdomscrusade.kingdoms.api.util.TestUtil.injectInit
+import net.kingdomscrusade.kingdoms.api.util.toStringWithoutDashes
 import net.kingdomscrusade.kingdoms.api.util.toUUID
 import java.util.*
 
@@ -54,7 +55,7 @@ class KingdomsRepositoryTest : FunSpec({
                 executeUpdate(
                     """
                     INSERT INTO Kingdoms VALUES (
-                        UNHEX('${obj.id.toString().replace("-", "")}'),
+                        UNHEX('${obj.id.toStringWithoutDashes()}'),
                         '${obj.name}'    
                     )
                     """.trimIndent()
@@ -98,7 +99,7 @@ class KingdomsRepositoryTest : FunSpec({
                 executeUpdate(
                     """
                         INSERT INTO Kingdoms VALUES (
-                            UNHEX('${obj.id.toString().replace("-", "")}'),
+                            UNHEX('${obj.id.toStringWithoutDashes()}'),
                             '${obj.name}'
                         )
                     """.trimIndent()
@@ -141,7 +142,7 @@ class KingdomsRepositoryTest : FunSpec({
                 executeUpdate(
                     """
                     INSERT INTO Kingdoms VALUES (
-                        UNHEX('${obj.id.toString().replace("-", "")}'), 
+                        UNHEX('${obj.id.toStringWithoutDashes()}'), 
                         '${obj.name}'
                     )
                 """.trimIndent()
@@ -190,7 +191,7 @@ class KingdomsRepositoryTest : FunSpec({
                 executeUpdate(
                     """
                     INSERT INTO Kingdoms VALUES (
-                        UNHEX('${obj.id.toString().replace("-", "")}'), 
+                        UNHEX('${obj.id.toStringWithoutDashes()}'), 
                         '${obj.name}'
                     )
                 """.trimIndent()
@@ -238,7 +239,7 @@ class KingdomsRepositoryTest : FunSpec({
                 executeUpdate(
                     """
                     INSERT INTO Kingdoms VALUES (
-                        UNHEX('${obj.id.toString().replace("-", "")}'), 
+                        UNHEX('${obj.id.toStringWithoutDashes()}'), 
                         '${obj.name}'
                     )
                 """.trimIndent()
@@ -284,7 +285,7 @@ class KingdomsRepositoryTest : FunSpec({
                 executeUpdate(
                     """
                     INSERT INTO Kingdoms VALUES (
-                        UNHEX('${obj.id.toString().replace("-", "")}'), 
+                        UNHEX('${obj.id.toStringWithoutDashes()}'), 
                         '${obj.name}'
                     )
                 """.trimIndent()
