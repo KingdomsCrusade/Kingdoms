@@ -4,7 +4,7 @@ import net.kingdomscrusade.kingdoms.api.varclass.PermissionType
 import java.util.*
 
 
-data class RoleModel(
+data class RolesModel(
     var id : UUID = UUID.randomUUID(),
     var name: String,
     var permissions: MutableSet<PermissionType> = mutableSetOf(),

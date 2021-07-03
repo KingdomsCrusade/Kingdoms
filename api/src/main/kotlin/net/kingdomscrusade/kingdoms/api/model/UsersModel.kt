@@ -2,7 +2,7 @@ package net.kingdomscrusade.kingdoms.api.model
 
 import java.util.*
 
-data class UserModel(
+data class UsersModel(
     var id : UUID,
     var name: String,
     var kingdom: UUID,
