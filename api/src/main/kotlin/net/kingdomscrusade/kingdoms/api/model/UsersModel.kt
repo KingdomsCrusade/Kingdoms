@@ -3,8 +3,8 @@ package net.kingdomscrusade.kingdoms.api.model
 import java.util.*
 
 data class UsersModel(
-    var id : UUID,
-    var name: String,
-    var kingdom: UUID,
-    var role: UUID?,
+    val id : UUID,
+    val name: String,
+    val kingdom: UUID,
+    val role: UUID?,
 ) : ApiModel

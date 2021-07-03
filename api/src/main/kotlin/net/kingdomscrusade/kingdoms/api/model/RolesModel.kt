@@ -5,9 +5,9 @@ import java.util.*
 
 
 data class RolesModel(
-    var id : UUID = UUID.randomUUID(),
-    var name: String,
-    var permissions: MutableSet<PermissionType> = mutableSetOf(),
-    var kingdom: UUID?,
+    val id : UUID = UUID.randomUUID(),
+    val name: String,
+    val permissions: MutableSet<PermissionType> = mutableSetOf(),
+    val kingdom: UUID?,
 ) : ApiModel
 

@@ -3,6 +3,6 @@ package net.kingdomscrusade.kingdoms.api.model
 import java.util.*
 
 data class KingdomsModel(
-    var id: UUID = UUID.randomUUID(),
-    var name: String,
+    val id: UUID = UUID.randomUUID(),
+    val name: String,
 ) : ApiModel
