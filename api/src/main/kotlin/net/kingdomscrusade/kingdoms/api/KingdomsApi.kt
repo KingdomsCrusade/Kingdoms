@@ -49,7 +49,7 @@ class KingdomsApi private constructor(private val dataSource: HikariDataSource) 
     fun getConnectionObject(): Connection = dataSource.connection
 
     // CRUDs
-    fun create(init: CreateStatement.() -> Unit): List<UUID> =
+    fun create(init: CreateStatement.() -> Unit): MutableMap<Pair<Class<ApiModel>, String>, UUID> =
         CreateStatement().let {
             it.init()
             it.execute()
