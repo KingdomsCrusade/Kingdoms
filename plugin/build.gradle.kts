@@ -30,9 +30,8 @@ dependencies {
 bukkit{
     main = "${project.group}.${project.name.toLowerCase()}.${project.name}Plugin"
     author = "LittleHillMYR"
-    website = "kingdomscrusade.net"
+    website = "http://kingdomscrusade.net/"
     apiVersion = "1.16"
-    depend = listOf("KotlinBukkitAPI")
 
     description = "Kingdom management plugin for Kingdoms Crusade"
 }

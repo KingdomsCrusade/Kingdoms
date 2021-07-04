@@ -44,7 +44,7 @@ class UsersService : IUsersService{
                 .select {
                     // Receiving all rows matching _obj.id and _obj.kingdom
                     (UsersTable.id eq _obj.id) and (UsersTable.kingdom eq _obj.kingdom)
-                        // And not the rows that mathces the targetId and targetKingdom
+                        // And not the rows that matches the targetId and targetKingdom
                         .andNot{(UsersTable.id eq _targetId) and (UsersTable.kingdom eq _targetUserKingdom)}
                 }
                 .empty()
