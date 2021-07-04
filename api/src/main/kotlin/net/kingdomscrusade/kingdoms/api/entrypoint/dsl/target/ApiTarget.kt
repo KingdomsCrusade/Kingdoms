@@ -1,3 +1,9 @@
 package net.kingdomscrusade.kingdoms.api.entrypoint.dsl.target
 
-sealed interface ApiTarget
+import java.util.*
+
+interface ApiTarget {
+    val type : TargetType
+    val id : UUID?
+    val name : String?
+}

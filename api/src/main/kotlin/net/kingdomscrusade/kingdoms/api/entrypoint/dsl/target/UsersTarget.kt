@@ -5,9 +5,9 @@ package net.kingdomscrusade.kingdoms.api.entrypoint.dsl.target
 import java.util.*
 
 data class UsersTarget private constructor(
-    val type: TargetType,
-    val id: UUID?,
-    val name: String?,
+    override val type: TargetType,
+    override val id: UUID?,
+    override val name: String?,
     val kingdom: UUID
 ) : ApiTarget {
     constructor(id: UUID, kingdom: UUID) : this(type = TargetType.ID, id = id, name = null, kingdom = kingdom)

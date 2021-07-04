@@ -5,8 +5,8 @@ import java.util.*
 
 
 data class RolesModel(
-    val id : UUID = UUID.randomUUID(),
-    val name: String,
+    override val id : UUID = UUID.randomUUID(),
+    override val name: String,
     val permissions: MutableSet<PermissionType> = mutableSetOf(),
     val kingdom: UUID?,
 ) : ApiModel
